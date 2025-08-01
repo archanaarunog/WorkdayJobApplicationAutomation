@@ -6,32 +6,6 @@
 
 ---
 
-## 3. Data Flow Architecture
-
-### User Journey & Data Movement
-
-1. **Job Discovery**
-   - User visits JAPS Main Portal.
-   - JAPS Main fetches job listings from Meta, Amazon, and Google portals via API calls (e.g., `/api/jobs`).
-   - User browses, filters, and searches jobs from all companies in one place.
-
-2. **Application Initiation**
-   - User clicks "Apply" on a job in JAPS Main.
-   - JAPS Main redirects the user to the selected company portal (e.g., Amazon Portal).
-   - No user data is transferred—only the job reference or ID may be passed in the URL.
-
-3. **Registration/Login**
-   - User registers or logs in on the company portal (Meta, Amazon, or Google).
-   - User credentials and profile data are stored only in that portal's database.
-
-4. **Profile & Application Submission**
-   - User fills out profile and application forms on the company portal.
-   - Data is saved in the company portal's database (e.g., `amazon.db`).
-   - Resume upload and parsing (Google only) handled locally in that portal.
-
-5. **Confirmation & Status Tracking**
-   - User receives on-screen confirmation or simulated email.
-   - Application status is tracked only in the company portal's system.em (JAPS)
 
 ## 1. System Overview
 
@@ -97,6 +71,34 @@ The Job Application Portal System (JAPS) is a multi-portal mock ecosystem design
 - End-to-end tests should cover the full journey for each company portal independently.
 
 ---
+
+
+## 3. Data Flow Architecture
+
+### User Journey & Data Movement
+
+1. **Job Discovery**
+   - User visits JAPS Main Portal.
+   - JAPS Main fetches job listings from Meta, Amazon, and Google portals via API calls (e.g., `/api/jobs`).
+   - User browses, filters, and searches jobs from all companies in one place.
+
+2. **Application Initiation**
+   - User clicks "Apply" on a job in JAPS Main.
+   - JAPS Main redirects the user to the selected company portal (e.g., Amazon Portal).
+   - No user data is transferred—only the job reference or ID may be passed in the URL.
+
+3. **Registration/Login**
+   - User registers or logs in on the company portal (Meta, Amazon, or Google).
+   - User credentials and profile data are stored only in that portal's database.
+
+4. **Profile & Application Submission**
+   - User fills out profile and application forms on the company portal.
+   - Data is saved in the company portal's database (e.g., `amazon.db`).
+   - Resume upload and parsing (Google only) handled locally in that portal.
+
+5. **Confirmation & Status Tracking**
+   - User receives on-screen confirmation or simulated email.
+   - Application status is tracked only in the company portal's system.em (JAPS)
 
 ## 4. Service Communication & APIs
 

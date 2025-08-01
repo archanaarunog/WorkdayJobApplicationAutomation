@@ -20,8 +20,8 @@ This document defines user stories for the Job Application Portal System (JAPS) 
 **Detailed Criteria:**
 - [ ] Email address must be unique per portal
 - [ ] Password must meet security requirements (8+ chars, mixed case, numbers)
-- [ ] First name and last name are required fields
-- [ ] Phone number is optional but must be valid format if provided
+- [ ] First name, last name, and phone number are required fields
+- [ ] Phone number must be valid format
 - [ ] Success message displays after successful registration
 - [ ] User is redirected to login page after registration
 - [ ] Email validation occurs before form submission
