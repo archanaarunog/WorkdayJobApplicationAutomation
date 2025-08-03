@@ -10,15 +10,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Get the path to our project root
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+# Get the path to our project root (5 levels up to get to WorkdayJobApplicationAutomation/)
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 database_path = os.path.join(project_root, "databases", "meta.db")
 
 # Create the database URL - SQLite uses file:// format
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{database_path}"
 
 # Create the database engine
-# check_same_thread=False allows multiple threads to use the same connection
+# check_same_thread=False allows multiple threads to use the same connection 
+# this being able to have multiple users access the database at the same time
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, 
     connect_args={"check_same_thread": False}

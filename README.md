@@ -1,0 +1,198 @@
+
+
+# Meta Portal Job Application System (V1.0.0)
+
+**Project Title:** Meta Portal Job Application System
+
+**Description:**
+This project is a realistic, end-to-end job application portal designed for SDET/SDE learning and portfolio building. It features a FastAPI backend, SQLAlchemy ORM, JWT authentication, and a modern Bootstrap-styled frontend using vanilla HTML, CSS, and JavaScript. The system demonstrates secure user registration/login, job listing, and a functional job application workflow with modal forms.
+
+---
+
+## Skills Used
+
+- FastAPI (Python web framework)
+- SQLAlchemy (ORM, database modeling)
+- SQLite (local database)
+- Pydantic (data validation)
+- JWT (authentication)
+- bcrypt (password hashing)
+- REST API design
+- CORS configuration
+- HTML5, CSS3, JavaScript (vanilla)
+- Bootstrap 5 (responsive UI)
+- Modular project structure
+- API documentation (Swagger UI)
+- Git & GitHub (version control)
+
+---
+
+## Features (V1.0.0)
+
+- **User Registration**: Create a new user account with email, password, and profile details.
+- **User Login**: Secure login with JWT authentication; token stored in browser localStorage.
+- **Job Listing**: View all available jobs fetched from the backend API.
+- **Apply Button**: Each job card has an Apply button. Users can submit a cover letter and additional info via a modal popup.
+- **Logout**: Logout button clears session and redirects to login.
+- **Responsive UI**: Clean, modern look using Bootstrap 5.
+- **API Documentation**: Swagger UI available at `/docs` for backend testing.
+- **CORS Enabled**: Frontend and backend communicate securely across ports.
+
+---
+
+
+## Project Structure
+
+```
+WorkdayJobApplicationAutomation/
+├── services/
+│   └── meta-service/
+│       └── src/
+│           ├── main.py           # FastAPI app entry point
+│           ├── models/           # SQLAlchemy models (User, Job, Application)
+│           ├── routes/           # API routers (user.py, job.py, applications.py)
+│           ├── schemas.py        # Pydantic schemas
+│           └── config/           # Database config
+├── frontend/
+│   └── meta-ui/
+│       └── public/
+│           ├── index.html
+│           ├── register.html
+│           ├── login.html
+│           ├── jobs.html
+│           └── assets/
+│               ├── css/style.css
+│               └── js/
+│                   ├── register.js
+│                   ├── login.js
+│                   └── jobs.js
+└── README.md
+```
+
+---
+
+
+## Setup Instructions
+
+### Prerequisites
+- Python 3.9 or higher
+- Git (for cloning the repository)
+
+### 1. Clone the Repository
+```sh
+git clone https://github.com/archanaarunog/WorkdayJobApplicationAutomation.git
+cd WorkdayJobApplicationAutomation
+```
+
+### 2. Backend Setup (FastAPI)
+
+**Navigate to backend directory:**
+```sh
+cd services/meta-service
+```
+
+**Create and activate virtual environment:**
+```sh
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+**Install dependencies:**
+```sh
+pip install fastapi uvicorn sqlalchemy pydantic bcrypt python-jose
+```
+
+**Run the backend server:**
+```sh
+uvicorn src.main:app --reload
+```
+
+**Verify backend is running:**
+- Backend API: [http://localhost:8000](http://localhost:8000)
+- API Documentation: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+### 3. Frontend Setup (Static HTML/JS)
+
+**Open a new terminal and navigate to frontend directory:**
+```sh
+cd WorkdayJobApplicationAutomation/frontend/meta-ui/public
+```
+
+**Serve static files:**
+```sh
+python3 -m http.server 8080
+```
+
+**Access the application:**
+- Frontend: [http://localhost:8080/](http://localhost:8080/)
+
+### 4. Quick Start Guide
+
+**Terminal 1 (Backend):**
+```sh
+cd WorkdayJobApplicationAutomation/services/meta-service
+source venv/bin/activate
+uvicorn src.main:app --reload
+```
+
+**Terminal 2 (Frontend):**
+```sh
+cd WorkdayJobApplicationAutomation/frontend/meta-ui/public
+python3 -m http.server 8080
+```
+
+**Access URLs:**
+- Frontend: http://localhost:8080
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+
+---
+
+
+## How to Use
+
+1. **Register a new user** via the Register page.
+2. **Login** with your credentials.
+3. **Add jobs** using the backend Swagger UI (`/api/jobs/` POST endpoint).
+4. **View jobs** on the Jobs page. Each job is shown as a card with an Apply button.
+5. **Click Apply** to open a modal, fill in your cover letter, and submit your application.
+6. **Logout** using the Logout button on the Jobs page.
+
+---
+
+
+## API Endpoints
+
+- `POST /api/users/register` — Register a new user
+- `POST /api/users/login` — Login and receive JWT token
+- `GET /api/jobs/` — List all jobs
+- `POST /api/jobs/` — Create a new job (admin/dev only)
+- `POST /api/applications/` — Apply to a job (requires authentication)
+- `GET /api/applications/me` — List your job applications
+
+---
+
+
+## Tech Stack
+- **Backend:** FastAPI, SQLAlchemy, SQLite, Pydantic, JWT, bcrypt
+- **Frontend:** HTML, CSS (Bootstrap), JavaScript (vanilla)
+
+---
+
+
+## Known Issues / Roadmap
+- After applying, the UI disables the Apply button but does not show application history (planned for V1.1).
+- Profile and admin features are not yet implemented.
+- Error handling and edge cases will be improved in future versions.
+
+---
+
+
+## Contributing
+Pull requests and suggestions are welcome! For major changes, please open an issue first.
+
+---
+
+
+## License
+MIT

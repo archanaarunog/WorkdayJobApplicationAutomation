@@ -7,7 +7,7 @@ Think of it as a blueprint for a user table.
 
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.sql import func
-from ..config.database import Base
+from src.config.database import Base
 
 class User(Base):
     """
@@ -29,13 +29,34 @@ class User(Base):
     # Timestamps - automatically track when records are created/updated
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
     
+    
+
     # Status tracking
     is_active = Column(Boolean, default=True, nullable=False)
 
+    # Relationship: All job applications submitted by this user
+    # This allows you to do: user.applications to get a list of Application objects
+    # back_populates must match the name used in Application model's relationship to User
+    from sqlalchemy.orm import relationship
+    applications = relationship("Application", back_populates="user", cascade="all, delete-orphan")
+
+    # __repr__ is a special method that defines how this object appears when you print it or inspect it in the Python shell.
+    # It is not called automatically every time; it is used when you do print(user), repr(user), or see the object in debugging tools.
     def __repr__(self):
         """
-        This method defines how the User object looks when printed.
-        Useful for debugging.
+        This method defines how the User object looks when printed or inspected.
+        Useful for debugging and logging.
         """
         return f"<User(id={self.id}, email='{self.email}', name='{self.first_name} {self.last_name}')>"
+
+
+"""
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+)
+
+"""
