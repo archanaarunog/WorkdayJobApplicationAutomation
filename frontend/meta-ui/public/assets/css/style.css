@@ -1,0 +1,5 @@
+body { font-family: Arial, sans-serif; margin: 2em; background: #f8f9fa; }
+h1 { color: #2d3a4b; }
+form { margin-bottom: 1em; }
+input, button { margin: 0.5em 0; padding: 0.5em; }
+#message { margin-top: 1em; color: #d9534f; }
