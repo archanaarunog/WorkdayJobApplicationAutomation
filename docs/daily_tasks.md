@@ -1,4 +1,38 @@
 # Daily Task Management - JAPS
+#
+# ---
+#
+# v1.0.0 Features (Completed)
+# - User registration and login with JWT authentication
+# - Job listing and job details view
+# - Apply to jobs with cover letter (modal form)
+# - Secure password hashing (bcrypt)
+# - SQLite database with SQLAlchemy models (User, Job, Application)
+# - API documentation (Swagger UI)
+# - CORS enabled for frontend-backend integration
+# - Responsive UI with Bootstrap 5
+# - Modular project structure (backend/frontend separation)
+# - Basic error handling and validation
+# - Project documentation and setup instructions
+#
+# ---
+#
+# v1.1.0 Features (Planned)
+# - User application history/profile page (view jobs applied to)
+# - Admin dashboard (manage jobs, view all applications, user management)
+# - Enhanced error handling and user feedback (frontend/backend)
+# - Input validation improvements (frontend/backend)
+# - Password reset/change functionality
+# - Pagination and filtering for job listings
+# - UI/UX improvements:
+#   - Improved navigation bar and page layout
+#   - Loading indicators and better modals
+#   - Consistent color scheme and branding
+#   - Mobile responsiveness and accessibility
+# - API security hardening (rate limiting, improved JWT handling)
+# - Documentation updates (usage examples, API docs, contribution guide)
+# - Additional tests and test data
+
 
 ## Day 1: July 31, 2025 (4 Hours Available)
 
