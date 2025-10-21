@@ -108,7 +108,11 @@ async function fetchJobs() {
             }, 1200);
           } else {
             const err = await resp.json();
-            msgDiv.innerHTML = `<span class="text-danger">${err.detail || 'Failed to apply.'}</span>`;
+            let errorMsg = err.detail;
+            if (typeof errorMsg === 'object') {
+              errorMsg = JSON.stringify(errorMsg);
+            }
+            msgDiv.innerHTML = `<span class="text-danger">${errorMsg || 'Failed to apply.'}</span>`;
           }
         });
       });
@@ -119,7 +123,47 @@ async function fetchJobs() {
 }
 
 // Logout button handler
+
+// Fetch and render user's applications
+async function fetchApplications() {
+  const token = localStorage.getItem('token');
+  const container = document.getElementById('applicationsContainer');
+  // Show loading spinner
+  container.innerHTML = '<div class="text-center my-3"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+  try {
+    const res = await fetch('http://localhost:8000/api/applications/me', {
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
+    if (res.ok) {
+      const applications = await res.json();
+      if (applications.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">No applications found.</div>';
+        return;
+      }
+      // Render applications as a table
+      let table = `<table class="table table-bordered table-striped"><thead><tr><th>Job ID</th><th>Cover Letter</th><th>Additional Info</th><th>Applied On</th></tr></thead><tbody>`;
+      applications.forEach(app => {
+        table += `<tr>
+          <td>${app.job_id}</td>
+          <td>${app.cover_letter || ''}</td>
+          <td>${app.additional_info || ''}</td>
+          <td>${app.created_at ? new Date(app.created_at).toLocaleString() : ''}</td>
+        </tr>`;
+      });
+      table += '</tbody></table>';
+      container.innerHTML = table;
+    } else {
+      // Handle error response
+      const err = await res.json();
+      container.innerHTML = `<div class="alert alert-danger">${err.detail || 'Failed to fetch applications.'}</div>`;
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="alert alert-danger">Network error. Please try again.</div>';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  // Logout button logic
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function() {
@@ -127,5 +171,23 @@ document.addEventListener('DOMContentLoaded', function() {
       window.location.href = 'login.html';
     });
   }
+  // Fetch jobs on page load
   fetchJobs();
+
+  // My Applications button logic
+  const myApplicationsBtn = document.getElementById('myApplicationsBtn');
+  if (myApplicationsBtn) {
+    myApplicationsBtn.addEventListener('click', function() {
+      /*
+        When the user clicks the 'My Applications' button:
+        1. Call fetchApplications() to get the user's applications from the backend.
+        2. fetchApplications() sends a GET request to /api/applications/me with the JWT token.
+        3. While loading, a spinner is shown. On success, applications are rendered as a table.
+        4. If there are no applications, a friendly message is shown.
+        5. If there is an error (network or backend), an error message is displayed.
+        6. You can further enhance this by toggling job listings/applications visibility if desired.
+      */
+      fetchApplications();
+    });
+  }
 });

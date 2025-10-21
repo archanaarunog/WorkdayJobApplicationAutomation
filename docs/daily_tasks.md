@@ -530,3 +530,217 @@ Redirect to jobs page after login
 Display job cards from API
 Basic CSS styling
 Apply button (leads to application form)
+
+---
+
+## Next Phase: UI/UX Revamp & Design Enhancement
+
+### Overview
+Complete redesign of all frontend pages with professional, modern UI using pastel purple/lavender color scheme and center-aligned layouts.
+
+### Priority: HIGH
+**Objective:** Transform the basic functional UI into a professional, visually appealing job portal
+
+---
+
+### Feature 1: Homepage/Main Page Enhancement
+**Status:** ⏳ PLANNED
+
+**Requirements:**
+- Create professional landing page with hero banner section
+- Add portal description and value proposition text
+  - What the portal offers (job searching/posting)
+  - Call-to-action messaging for users and employers
+- Center-aligned, modern layout with proper spacing
+- Clear CTA buttons for "Register" and "Login"
+- Navigation menu for all portal features
+- Responsive design for all screen sizes
+
+**Design Elements:**
+- Hero banner with background image or gradient
+- Feature highlights section
+- Testimonials or statistics (optional)
+- Footer with links
+
+---
+
+### Feature 2: Jobs Page Redesign
+**Status:** ⏳ PLANNED
+
+**Requirements:**
+- Redesign job listing cards with better visual hierarchy
+  - Company logo placeholder
+  - Job title, location, department prominently displayed
+  - Salary range and job type badges
+  - Brief description preview
+- Proper grid/list view with consistent spacing
+- Enhanced job details modal or dedicated page
+- Add filtering/search UI elements:
+  - Search bar
+  - Department filter
+  - Location filter
+  - Job type filter
+- Pagination controls
+- Center-aligned content with responsive grid
+
+**Design Elements:**
+- Card-based layout with hover effects
+- Filter sidebar or top bar
+- Sort options (newest, salary, etc.)
+- "No results" state design
+
+---
+
+### Feature 3: Registration Page Revamp
+**Status:** ⏳ PLANNED
+
+**Requirements:**
+- Professional, center-aligned form layout
+- Proper field grouping (Personal Info, Contact Info, etc.)
+- Form validation with visual feedback
+  - Real-time validation indicators
+  - Error messages below each field
+  - Success checkmarks for valid fields
+- Clear success/error message styling with animations
+- Progress indicator if multi-step registration
+- "Already have an account? Login" link
+- Responsive form design
+
+**Design Elements:**
+- Form container with shadow/elevation
+- Floating labels or clear label positioning
+- Password strength indicator
+- Terms and conditions checkbox
+- Submit button with loading state
+
+---
+
+### Feature 4: Login Page Redesign
+**Status:** ⏳ PLANNED
+
+**Requirements:**
+- **CRITICAL FIX:** Center-align login form (currently too far left)
+- Professional input field styling
+- "Forgot password?" link with proper styling
+- "Remember me" checkbox
+- Clear error/success message presentation
+- "Don't have an account? Register" link
+- Social login placeholders (for future)
+- Responsive design
+
+**Design Elements:**
+- Login container centered vertically and horizontally
+- Icon-enhanced input fields (email icon, password icon)
+- Submit button with hover effects
+- Divider for alternative login methods
+- Background design matching theme
+
+---
+
+### Global Design System
+
+**Color Theme:**
+- **Primary Palette:** Pastel purple/lavender/violet soft colors
+- **Approach:** Use shades and tints to distinguish different UI elements
+  - Primary buttons: Medium lavender
+  - Secondary buttons: Light purple
+  - Accent elements: Deeper violet
+  - Backgrounds: Very light lavender tints
+  - Text: Dark purple for headers, gray-purple for body
+
+**Styling Implementation Strategy:**
+- **Option 1:** Bootstrap theme customization
+  - Use Bootstrap's CSS variables/SCSS to override default colors
+  - Customize with pastel purple variants
+- **Option 2:** Pre-built Bootstrap theme as base
+  - Use Bootswatch themes (e.g., "Minty" or "Flatly") as starting point
+  - Override with custom pastel purple palette
+- **Option 3:** Custom CSS with Bootstrap components
+  - Keep Bootstrap grid and components
+  - Write custom CSS for color scheme and layouts
+
+**Consistent Elements Across All Pages:**
+- Navigation bar with consistent styling
+- Footer with links and branding
+- Button styles (primary, secondary, success, danger)
+- Form input styling
+- Card/container styling
+- Loading spinners and animations
+- Error/success message alerts
+- Modal styling
+- Spacing and typography scale
+
+**Layout Principles:**
+- Center-aligned main content
+- Maximum content width with padding
+- Responsive breakpoints for mobile/tablet/desktop
+- Consistent padding and margins
+- Professional background (subtle pattern or gradient)
+
+---
+
+### Implementation Checklist
+
+**Phase 1: Setup & Design System (1-2 hours)**
+- [ ] Choose and set up Bootstrap theme (custom or preset)
+- [ ] Define CSS variables for color palette
+- [ ] Create base styles for common components
+- [ ] Set up typography scale
+- [ ] Create reusable CSS classes
+
+**Phase 2: Homepage (2-3 hours)**
+- [ ] Create hero section HTML/CSS
+- [ ] Add portal description content
+- [ ] Implement CTA buttons
+- [ ] Create features/benefits section
+- [ ] Add footer
+- [ ] Test responsive layout
+
+**Phase 3: Login Page (1-2 hours)**
+- [ ] Restructure HTML for center alignment
+- [ ] Apply new form styling
+- [ ] Add input icons
+- [ ] Style buttons and links
+- [ ] Test responsive design
+
+**Phase 4: Registration Page (2-3 hours)**
+- [ ] Restructure form layout
+- [ ] Implement field validation UI
+- [ ] Add success/error messaging
+- [ ] Style all form elements
+- [ ] Test validation flow
+- [ ] Test responsive design
+
+**Phase 5: Jobs Page (3-4 hours)**
+- [ ] Redesign job card component
+- [ ] Implement grid layout
+- [ ] Add filter/search UI
+- [ ] Create job details view
+- [ ] Add pagination controls
+- [ ] Test interactions and responsive design
+
+**Phase 6: Testing & Polish (1-2 hours)**
+- [ ] Cross-browser testing
+- [ ] Mobile responsiveness testing
+- [ ] Accessibility checks
+- [ ] Performance optimization
+- [ ] Final visual polish
+
+---
+
+### Success Criteria
+- All pages use consistent pastel purple color scheme
+- All layouts are center-aligned and responsive
+- Login form is properly centered (not left-aligned)
+- Job cards have modern, professional appearance
+- Forms have clear validation and feedback
+- Homepage has engaging content and clear CTAs
+- All pages work on mobile, tablet, and desktop
+- Loading states and transitions are smooth
+- Overall design looks professional and cohesive
+
+---
+
+**Estimated Total Time:** 10-16 hours
+**Priority:** HIGH - Foundation for user experience
+**Dependencies:** None (can start immediately)

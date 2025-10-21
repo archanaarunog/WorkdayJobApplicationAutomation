@@ -86,24 +86,33 @@ cd WorkdayJobApplicationAutomation
 
 ### 2. Backend Setup (FastAPI)
 
-**Navigate to backend directory:**
+**Navigate to backend directory and set up virtual environment:**
 ```sh
+# Navigate to the backend service directory
 cd services/meta-service
-```
 
-**Create and activate virtual environment:**
-```sh
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Create a Python 3.11 virtual environment
+python3.11 -m venv venv_py311
+
+# Activate the virtual environment
+source venv_py311/bin/activate  # On Windows: venv_py311\Scripts\activate
 ```
 
 **Install dependencies:**
 ```sh
-pip install fastapi uvicorn sqlalchemy pydantic bcrypt python-jose
+# Install all required packages
+pip install -r requirements.txt
+
+# If bcrypt issues occur, reinstall bcrypt specifically
+pip uninstall -y bcrypt passlib
+pip install bcrypt==4.0.1
 ```
 
 **Run the backend server:**
 ```sh
+# Must be run from the meta-service directory
+cd /path/to/WorkdayJobApplicationAutomation/services/meta-service
+source venv_py311/bin/activate
 uvicorn src.main:app --reload
 ```
 
@@ -113,33 +122,37 @@ uvicorn src.main:app --reload
 
 ### 3. Frontend Setup (Static HTML/JS)
 
-**Open a new terminal and navigate to frontend directory:**
+**In a new terminal, navigate to the public directory:**
 ```sh
-cd WorkdayJobApplicationAutomation/frontend/meta-ui/public
-```
-
-**Serve static files:**
-```sh
-python3 -m http.server 8080
+# Must be run from the public directory containing the HTML files
+cd /path/to/WorkdayJobApplicationAutomation/frontend/meta-ui/public
+python3 -m http.server 8081  # Using port 8081 to avoid conflicts
 ```
 
 **Access the application:**
-- Frontend: [http://localhost:8080/](http://localhost:8080/)
+- Frontend: [http://localhost:8081/](http://localhost:8081/)
 
 ### 4. Quick Start Guide
 
-**Terminal 1 (Backend):**
+**Terminal 1 (Backend) - Exact Location and Command:**
 ```sh
-cd WorkdayJobApplicationAutomation/services/meta-service
-source venv/bin/activate
+cd /Users/achu/Documents/Workspace/WorkdayJobApplicationAutomation/services/meta-service
+source venv_py311/bin/activate
 uvicorn src.main:app --reload
 ```
 
-**Terminal 2 (Frontend):**
+**Terminal 2 (Frontend) - Exact Location and Command:**
 ```sh
-cd WorkdayJobApplicationAutomation/frontend/meta-ui/public
-python3 -m http.server 8080
+cd /Users/achu/Documents/Workspace/WorkdayJobApplicationAutomation/frontend/meta-ui/public
+python3 -m http.server 8081
 ```
+
+**Important Notes:**
+1. The frontend must be run from the `public` directory where the HTML files are located
+2. Using port 8081 for frontend to avoid common port conflicts
+3. The backend must be run from the `meta-service` directory
+4. Always activate the virtual environment before running the backend
+5. If you see bcrypt-related errors during user registration, follow the bcrypt reinstallation steps above
 
 **Access URLs:**
 - Frontend: http://localhost:8080

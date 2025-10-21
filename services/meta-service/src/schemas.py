@@ -3,7 +3,7 @@ Pydantic schemas for Meta Portal API.
 These define the data shapes for requests and responses.
 """
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, validator, constr
 from typing import Annotated
 from typing import Optional
 from datetime import datetime
@@ -12,10 +12,18 @@ from datetime import datetime
 # User Schemas
 class UserCreate(BaseModel):
     email: EmailStr
-    password: Annotated[str, 8]
+    password: str
     first_name: str
     last_name: str
     phone: str
+
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('password must be at least 8 characters long')
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('password must be less than 72 bytes when encoded')
+        return v
 
 # For login (email and password only)
 class UserLogin(BaseModel):
@@ -66,7 +74,6 @@ class JobRead(BaseModel):
 
 # Application Schemas
 class ApplicationCreate(BaseModel):
-    user_id: int
     job_id: int
     cover_letter: str
     additional_info: Optional[str]

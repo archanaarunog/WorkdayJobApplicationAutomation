@@ -12,7 +12,7 @@ from src.services import auth
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")
 
 # IMPORTANT: Use the same secret key and algorithm as your auth service
-SECRET_KEY = "your-secret-key"  # TODO: Replace with your actual secret key
+SECRET_KEY = "DittoDolly@0806"  # Must match src/services/auth.py
 ALGORITHM = "HS256"
 
 # Dependency to get the current user from the JWT token
@@ -72,3 +72,7 @@ def login_user(form: schemas.UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     token = auth.create_access_token({"sub": user.email})
     return {"access_token": token, "token_type": "bearer"}
+
+
+
+
