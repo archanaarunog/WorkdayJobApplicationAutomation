@@ -11,12 +11,12 @@ async function fetchJobs() {
       return;
     }
     container.innerHTML = jobs.map(job => `
-      <div class="card mb-3 shadow-sm">
-        <div class="card-body">
-          <h3 class="card-title">${job.title}</h3>
-          <p class="card-text">${job.description}</p>
-          <p class="card-text"><strong>Location:</strong> ${job.location}</p>
-          <button class="btn btn-primary apply-btn" data-jobid="${job.id}">Apply</button>
+      <div class="card mb-4 card-shadow" style="border: 1px solid var(--border-light); border-radius: var(--radius-lg); transition: transform var(--transition-normal), box-shadow var(--transition-normal);">
+        <div class="card-body" style="background-color: var(--background-white);">
+          <h3 class="card-title" style="color: var(--text-purple); font-weight: 600;">${job.title}</h3>
+          <p class="card-text" style="color: var(--text-dark); margin: var(--spacing-sm) 0;">${job.description}</p>
+          <p class="card-text" style="color: var(--text-light); font-size: 0.9rem;"><strong style="color: var(--text-purple);">Location:</strong> ${job.location}</p>
+          <button class="btn btn-primary apply-btn mt-2" data-jobid="${job.id}">Apply Now</button>
         </div>
       </div>
     `).join('');

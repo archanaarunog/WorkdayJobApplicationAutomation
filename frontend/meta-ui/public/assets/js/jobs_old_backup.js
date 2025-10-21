@@ -119,9 +119,8 @@ function updateDashboardStats() {
     : 0;
   document.getElementById('responseRate').textContent = `${responseRate}%`;
   
-  // Saved Jobs Count
-  const savedCount = document.querySelectorAll('.btn-save.saved').length;
-  document.getElementById('savedJobsCount').textContent = savedCount;
+  // Profile Views (mock data)
+  document.getElementById('profileViews').textContent = '24';
 }
 
 // ==================== Job Card Rendering ====================

@@ -744,3 +744,459 @@ Complete redesign of all frontend pages with professional, modern UI using paste
 **Estimated Total Time:** 10-16 hours
 **Priority:** HIGH - Foundation for user experience
 **Dependencies:** None (can start immediately)
+
+---
+
+## v1.1.0 Unified Feature Roadmap
+*Professional UI + Realistic Functionality + Automation Testing Ready*
+
+---
+
+### **PHASE 1: Foundation & Visual Identity** (Priority: CRITICAL)
+*Establish professional look and core design system*
+
+#### **Feature 1.1: Global Design System Setup**
+**Description:** Implement pastel purple/lavender color scheme across entire site
+
+**Implementation:**
+- Bootstrap theme customization (CSS variables/SCSS)
+- Define color palette (primary, secondary, accent, backgrounds)
+- Create reusable component styles (buttons, cards, forms, modals)
+- Set up typography scale
+- Establish spacing/layout standards
+
+**Automation Benefit:** Consistent class names and structure from the start  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 1.2: Homepage/Landing Page Enhancement**
+**Description:** Professional entry point with hero banner and clear value proposition
+
+**UI/UX Elements:**
+- Hero section with background gradient/image
+- Portal description ("Find your dream job" messaging)
+- Feature highlights section
+- Clear CTAs for Register/Login
+- Navigation bar with all sections
+- Footer with links
+
+**Functional Elements:**
+- Responsive layout (mobile/tablet/desktop)
+- Smooth scroll navigation
+- Loading states
+
+**Automation Benefit:** Complex landing page with multiple sections to test  
+**Time Estimate:** 3-4 hours
+
+---
+
+### **PHASE 2: Authentication & User Experience** (Priority: HIGH)
+*Fix existing pages with professional styling*
+
+#### **Feature 2.1: Registration Page Revamp**
+**Description:** Professional, center-aligned registration with validation
+
+**UI/UX Elements:**
+- Center-aligned form container with shadow
+- Field grouping (Personal Info, Contact Info)
+- Floating labels or clear positioning
+- Password strength indicator
+- Visual validation feedback (checkmarks, error messages)
+- Success/error toast notifications
+- "Already have account?" link
+
+**Functional Elements:**
+- Real-time client-side validation
+- Terms & conditions checkbox
+- Submit button loading state
+
+**Automation Benefit:** Multiple input types, validation states, dynamic feedback  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 2.2: Login Page Redesign**
+**Description:** Center-aligned professional login (fix current left-alignment issue)
+
+**UI/UX Elements:**
+- **CRITICAL FIX:** Center vertically and horizontally
+- Icon-enhanced input fields
+- "Remember me" checkbox
+- "Forgot password?" link
+- "Don't have account?" register link
+- Clear error messaging
+
+**Functional Elements:**
+- JWT token handling
+- Session management
+- Error state handling
+
+**Automation Benefit:** Simple form with multiple interactive elements  
+**Time Estimate:** 1-2 hours
+
+---
+
+### **PHASE 3: Core Job Portal Features** (Priority: HIGH)
+*Main functionality with professional UI*
+
+#### **Feature 3.1: Jobs Page Redesign + Search & Filter**
+**Description:** Modern job listing with search and filtering capabilities
+
+**UI/UX Elements:**
+- Card-based layout with hover effects
+- Grid view with consistent spacing
+- Professional job card design:
+  - Company logo placeholder
+  - Job title, location, department badges
+  - Salary range display
+  - Brief description preview
+  - "Apply" button with styling
+
+**Functional Elements:**
+- Search by keyword (job title, description)
+- Filter by:
+  - Location dropdown
+  - Department dropdown
+  - Job type (Full-time, Part-time, Contract)
+- Sort options: Newest, Salary (High-Low), Relevance
+- Clear/Reset filters button
+
+**Automation Benefit:** Dynamic DOM updates on filter changes, multiple locator types  
+**Time Estimate:** 4-5 hours
+
+#### **Feature 3.2: Job Details Page/Modal**
+**Description:** Detailed view when clicking on a job card
+
+**UI/UX Elements:**
+- Full-screen modal or dedicated page
+- Professional layout with all job information
+- Styled sections (Description, Requirements, Benefits)
+- Prominent "Apply" button
+
+**Functional Elements:**
+- Opens on job card click
+- Displays full job description
+- Shows requirements list
+- Application form integration
+- Close/back navigation
+
+**Automation Benefit:** Modal toggles, nested locators, dynamic waits  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 3.3: Pagination & Lazy Loading**
+**Description:** Load jobs in chunks for performance and testing
+
+**Functional Elements:**
+- Option 1: "Load More" button
+- Option 2: Infinite scroll (IntersectionObserver)
+- Show "Loading..." state
+- Track current page/offset
+
+**Automation Benefit:** Element reloading, stale element exceptions, scroll testing  
+**Time Estimate:** 2-3 hours
+
+---
+
+### **PHASE 4: User Dashboard & Profile** (Priority: MEDIUM-HIGH)
+*Post-login experience*
+
+#### **Feature 4.1: Candidate Dashboard**
+**Description:** User's home after login showing application history
+
+**UI/UX Elements:**
+- Welcome message with user name
+- Dashboard card layout
+- Statistics (applications submitted, pending, etc.)
+- Quick actions section
+
+**Functional Elements:**
+- View all applied jobs with status
+- Application status badges:
+  - "Applied" (blue)
+  - "In Review" (yellow)
+  - "Rejected" (red)
+  - "Interview Scheduled" (green)
+- Filter by status
+- Sort by date applied
+- Link to each job details
+
+**Automation Benefit:** Dynamic state changes, backend-driven updates  
+**Time Estimate:** 3-4 hours
+
+#### **Feature 4.2: User Profile Section**
+**Description:** Edit personal information and preferences
+
+**UI/UX Elements:**
+- Tabbed interface (Personal Info, Experience, Skills)
+- Form with editable fields
+- Avatar/photo upload placeholder
+- Save button with confirmation
+
+**Functional Elements:**
+- Update name, email, phone
+- Add/edit skills (tags)
+- Update bio/summary
+- Form validation
+
+**Automation Benefit:** Multiple form field types (input, textarea, dropdown, tags)  
+**Time Estimate:** 2-3 hours
+
+---
+
+### **PHASE 5: Admin/HR Portal** (Priority: MEDIUM)
+*Management side of the portal*
+
+#### **Feature 5.1: Admin/HR Dashboard**
+**Description:** Separate admin interface with elevated permissions
+
+**UI/UX Elements:**
+- Different layout/color scheme (distinguish from candidate view)
+- Admin navigation sidebar
+- Dashboard with analytics cards
+- Data tables with actions
+
+**Functional Elements:**
+- Admin login (separate route or role check)
+- View all applicants in table format
+- Filter/search applicants
+- View application details
+- Change application status (approve/reject)
+- User management section
+
+**Automation Benefit:** Role-based testing, different UI layouts, permission checks  
+**Time Estimate:** 4-5 hours
+
+#### **Feature 5.2: Job Management (Admin)**
+**Description:** CRUD operations for jobs
+
+**Functional Elements:**
+- Create new job posting (form)
+- Edit existing jobs
+- Delete jobs (with confirmation)
+- Toggle job active/inactive status
+- View applicants per job
+
+**Automation Benefit:** Full CRUD testing, form submission, confirmation modals  
+**Time Estimate:** 3-4 hours
+
+#### **Feature 5.3: Admin Analytics Dashboard** (Optional)
+**Description:** Simple metrics and charts
+
+**Functional Elements:**
+- Number of total applicants
+- Number of jobs posted
+- Application status breakdown (chart)
+- Recent activity feed
+
+**Automation Benefit:** Chart elements (SVGs), dynamic numbers, data visualization testing  
+**Time Estimate:** 2-3 hours
+
+---
+
+### **PHASE 6: Enhanced UX Features** (Priority: MEDIUM)
+*Polish and user convenience*
+
+#### **Feature 6.1: Notifications System**
+**Description:** Toast messages for user actions
+
+**Functional Elements:**
+- "Application Submitted" success message
+- "Status Updated" notification
+- "Job Posted" confirmation
+- "Error occurred" alerts
+
+**UI/UX Elements:**
+- Toast appears at top-right or top-center
+- Auto-dismiss after 3-5 seconds
+- Different colors for success/error/info
+- Smooth animations
+
+**Automation Benefit:** Timing challenges, visibility testing, wait-for-disappear logic  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 6.2: Application Status Flow**
+**Description:** End-to-end status update system
+
+**Functional Elements:**
+- HR changes status in admin panel
+- Candidate sees updated status on dashboard
+- Email notification (optional/simulated)
+- Status history log
+
+**Automation Benefit:** Backend-driven DOM changes, real-time updates  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 6.3: Responsive Layouts**
+**Description:** Mobile-first responsive design
+
+**Functional Elements:**
+- Collapse navigation on mobile (hamburger menu)
+- Stack job cards vertically on small screens
+- Hide/show elements based on viewport (d-none, d-md-block)
+- Touch-friendly buttons and spacing
+
+**Automation Benefit:** Viewport-based DOM shifts, responsive testing  
+**Time Estimate:** 3-4 hours (across all pages)
+
+---
+
+### **PHASE 7: Automation Testing Enhancements** (Priority: MEDIUM-LOW)
+*Features specifically for test automation framework*
+
+#### **Feature 7.1: Dynamic Behaviors / Chaos Mode**
+**Description:** Controlled DOM instability for self-healing testing
+
+**Functional Elements:**
+- Backend flag: `CHAOS_MODE = True/False`
+- Randomized IDs: Element IDs change on page load
+- Attribute Drift: Class names randomly renamed
+- Text Variation: Button text alternates ("Apply" ↔ "Submit")
+- Layout Switch: Toggle grid/list view randomly
+- Dynamic Delays: Random 1-3 sec rendering delays
+- Modal Re-rendering: Recreate modal HTML on each open
+- Random Reordering: Shuffle job card order
+- Implementation: Backend middleware or JS config
+
+**Automation Benefit:** Train self-healing locators, simulate real-world drift  
+**Time Estimate:** 4-6 hours
+
+#### **Feature 7.2: Locator Metadata API**
+**Description:** Real-time tracking of element locators
+
+**Functional Elements:**
+- API endpoint: `GET /api/locators/logs`
+- Returns JSON: `{element_name: current_locator}`
+- Middleware updates JSON when IDs mutate
+- Log all locator changes with timestamp
+
+**Automation Benefit:** AI can fetch real-time locator changes for benchmarking  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 7.3: Semantic Label Mapping**
+**Description:** Ground-truth validation attributes
+
+**Functional Elements:**
+- Add `data-ai-label="apply_button"` to all key elements
+- Hidden from frontend styling
+- Never changes (stable reference)
+- Maps to functional purpose
+
+**Automation Benefit:** AI can validate if recovered locator matched correct element  
+**Time Estimate:** 1-2 hours (add to existing elements)
+
+#### **Feature 7.4: DOM Snapshots & Version Control**
+**Description:** Save HTML structure for comparison
+
+**Functional Elements:**
+- Capture rendered HTML of critical pages
+- Store as `.html` files with version/timestamp
+- Compare old vs new DOMs
+- Highlight structural changes
+
+**Automation Benefit:** Train similarity engine, track DOM evolution  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 7.5: Recovery Visualization Dashboard**
+**Description:** Internal debug page showing self-healing metrics
+
+**Functional Elements:**
+- Route: `/debug/selfheal`
+- Show diff of original vs recovered locators
+- Heatmap of healing success rate
+- List of all mutations and recoveries
+- Performance metrics
+
+**Automation Benefit:** Portfolio showcase, real-time monitoring  
+**Time Estimate:** 3-4 hours
+
+#### **Feature 7.6: Performance Feedback API**
+**Description:** Endpoint for AI framework to report results
+
+**Functional Elements:**
+- API endpoint: `POST /api/testfeedback/`
+- Receive: healed locator, success rate, retry count
+- Store in database
+- Generate reports
+
+**Automation Benefit:** Evaluate AI healing performance in real-time  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 7.7: Error Simulation Switch**
+**Description:** Intentionally break locators for testing
+
+**Functional Elements:**
+- Backend endpoint: `POST /simulate/error`
+- Parameters: element_name, error_type
+- Temporarily mutate specific element
+- Reset after test
+
+**Automation Benefit:** Controlled testing of recovery mechanisms  
+**Time Estimate:** 1-2 hours
+
+#### **Feature 7.8: Element Mutation Log**
+**Description:** Track all locator changes
+
+**Functional Elements:**
+- Log before/after mapping when elements mutate
+- Store in JSON file or database
+- Include timestamp, element, old locator, new locator
+- Export as dataset
+
+**Automation Benefit:** Labeled dataset for training recovery accuracy  
+**Time Estimate:** 2-3 hours
+
+#### **Feature 7.9: System Logs / Debug Page**
+**Description:** Hidden internal route for debugging
+
+**Functional Elements:**
+- Route: `/debug/locators`
+- Show all current element locators
+- Real-time updates
+- Export/copy functionality
+
+**Automation Benefit:** Quick reference for test development  
+**Time Estimate:** 1-2 hours
+
+---
+
+## **Summary by Priority**
+
+### **Must Have (Critical Path - 25-35 hours):**
+1. Global Design System Setup
+2. Homepage Enhancement
+3. Registration Page Revamp
+4. Login Page Redesign
+5. Jobs Page + Search & Filter
+6. Job Details Page
+7. Candidate Dashboard
+8. Admin Dashboard
+9. Job Management (Admin)
+
+### **Should Have (Important - 15-20 hours):**
+10. Pagination & Lazy Loading
+11. User Profile Section
+12. Notifications System
+13. Application Status Flow
+14. Responsive Layouts
+15. Chaos Mode Implementation
+
+### **Nice to Have (Enhancement - 15-20 hours):**
+16. Admin Analytics
+17. Locator Metadata API
+18. Semantic Label Mapping
+19. DOM Snapshots
+20. Recovery Visualization Dashboard
+21. Performance Feedback API
+22. Error Simulation
+23. Element Mutation Log
+24. System Logs/Debug Page
+
+---
+
+## **Total Estimated Time: 55-75 hours**
+
+---
+
+## **Implementation Strategy**
+
+1. **Weeks 1-2:** Phase 1-3 (Foundation + Core Features) → Get site looking professional
+2. **Weeks 3-4:** Phase 4-5 (Dashboards + Admin) → Add realistic functionality
+3. **Week 5:** Phase 6 (Enhanced UX) → Polish user experience
+4. **Week 6-7:** Phase 7 (Automation Features) → Add self-healing capabilities

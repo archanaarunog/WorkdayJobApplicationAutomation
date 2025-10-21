@@ -586,3 +586,380 @@ This document defines user stories for the Job Application Portal System (JAPS) 
 - [ ] Test data isolation between portals
 
 This comprehensive user story documentation provides clear, testable criteria for every major feature in the JAPS system, following Azure DevOps best practices for user story definition and acceptance criteria.
+
+---
+---
+
+# PHASE 1 IMPLEMENTATION: Foundation & Visual Identity
+
+## Implementation Approach:
+- **Developer (AI):** Will write code and explain each change
+- **Tester (You):** Will test each point before moving to next
+- **Rule:** Do NOT delete or break existing working code
+
+---
+
+## Feature 1.1: Global Design System Setup
+
+**Objective:** Create pastel purple/lavender color scheme and reusable component styles
+
+### Quick Checklist:
+
+1. Create `theme.css` file with color variables
+2. Define button component styles
+3. Define card component styles
+4. Define form input styles
+5. Define typography classes
+6. Define spacing utility classes
+7. Link theme.css to all HTML pages
+8. Test theme on one element per page
+9. Verify no existing functionality breaks
+10. Document theme classes for reference
+
+---
+
+## Feature 1.2: Homepage/Landing Page Enhancement
+
+**Objective:** Create professional landing page with hero banner and CTAs
+
+### Quick Checklist:
+
+1. Backup existing index.html
+2. Create homepage structure (nav, hero, features, footer)
+3. Build navigation bar with responsive menu
+4. Create hero section with headline and CTA buttons
+5. Style hero section with purple gradient
+6. Add 3-feature highlights section
+7. Create bottom CTA section
+8. Build footer with links
+9. Add smooth scroll navigation (JS)
+10. Test complete homepage flow (responsive, links, styling)
+
+---
+
+## Phase 1 Summary
+
+**Total Tasks:** 20  
+**Estimated Time:** 5-7 hours  
+**Current Status:** ⏳ Ready to Start
+
+**When Phase 1 Complete:**
+- ✅ Theme system established
+- ✅ Homepage looks professional  
+- ✅ All existing pages still work
+- ✅ Ready for Phase 2 (Auth pages redesign)
+
+---
+
+**Ready to begin? Reply "start" to implement Feature 1.1, Task 1**
+
+---
+
+# DETAILED IMPLEMENTATION GUIDE
+*(We'll fill this in as we implement each task one-by-one)*
+
+---
+
+## Feature 1.1 - Detailed Implementation
+
+### 1. Create `theme.css` file with color variables
+**File:** `frontend/meta-ui/assets/css/theme.css`  
+**What:** CSS :root variables with pastel purple color palette  
+**Test:** File created, colors defined
+
+### 2. Define button component styles
+**What:** Button classes (primary, secondary, outline)  
+**Test:** Apply to one button, verify colors and hover
+
+### 3. Define card component styles
+**What:** Card classes with shadows and hover effects  
+**Test:** Apply to job cards
+
+### 4. Define form input styles
+**What:** Input classes with focus/error/success states  
+**Test:** Apply to login form inputs
+
+### 5. Define typography classes
+**What:** Heading and text size classes  
+**Test:** Apply to page headings
+
+### 6. Define spacing utility classes
+**What:** Margin and padding helpers  
+**Test:** Add spacing between elements
+
+### 7. Link theme.css to all HTML pages
+**What:** Add <link> tag in all HTML <head> sections  
+**Test:** Check DevTools that theme.css loads
+
+### 8. Test theme on existing elements
+**What:** Add theme classes to 1-2 existing elements per page  
+**Test:** Verify colors apply, nothing breaks
+
+### 9. Verify no existing functionality breaks
+**What:** Click through all pages and features  
+**Test:** Login, register, view jobs all still work
+
+### 10. Document theme classes
+**What:** Create theme-reference.md with all class names  
+**Test:** Review documentation
+
+---
+
+## Feature 1.2 - Detailed Implementation
+
+### 1. Backup existing index.html
+**What:** Copy index.html to index_backup.html  
+**Test:** Verify backup file exists
+
+### 2. Create homepage structure
+**What:** Add nav, hero, features, footer sections  
+**Test:** Basic structure visible
+
+### 3. Build navigation bar
+**What:** Responsive navbar with logo and links  
+**Test:** Links work, mobile menu toggles
+
+### 4. Create hero section
+**What:** Hero with headline and 2 CTA buttons  
+**Test:** Buttons visible and clickable
+
+### 5. Style hero section
+**What:** Purple gradient background, center alignment  
+**Test:** Looks good on desktop and mobile
+
+### 6. Add 3-feature highlights section
+**What:** 3 cards showing portal benefits  
+**Test:** Cards display in grid
+
+### 7. Create bottom CTA section
+**What:** Final call-to-action before footer  
+**Test:** Buttons link to register/jobs pages
+
+### 8. Build footer
+**What:** Footer with links and copyright  
+**Test:** Footer shows on all pages
+
+### 9. Add smooth scroll navigation
+**What:** JavaScript for smooth scrolling  
+**Test:** Clicking nav links scrolls smoothly
+
+### 10. Test complete homepage flow
+**What:** End-to-end homepage testing  
+**Test:** Everything responsive, all links work
+
+---
+
+**Implementation starts when you're ready. Reply "start" to begin with Task 1.1.1**
+
+---
+
+## Phase 1 Checklist Summary
+
+### Feature 1.1: Global Design System  
+Tasks 1-10 completed → Theme system established
+
+### Feature 1.2: Homepage Enhancement  
+Tasks 1-10 completed → Homepage looks professional
+
+###Phase 1 Complete Criteria:
+- [ ] **Classes to create:**
+  - `.input-purple` (styled input fields)
+  - `.input-focus` (focus state)
+  - `.input-error` (error state)
+  - `.input-success` (success state)
+- [ ] **Include:** border colors, focus effects, validation states
+- [ ] **Testing:** Apply to login/register forms, test focus and states
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 6: Set Up Typography Scale**
+- [ ] **Task:** Define typography classes in theme.css
+- [ ] **Classes to create:**
+  - `.heading-1` to `.heading-3` (different heading sizes)
+  - `.text-body` (body text)
+  - `.text-small` (small text)
+  - `.text-purple` (purple colored text)
+- [ ] **Include:** font-size, font-weight, color, line-height
+- [ ] **Testing:** Apply to various text elements, verify readability
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 7: Create Spacing Utility Classes**
+- [ ] **Task:** Add spacing classes in theme.css
+- [ ] **Classes to create:**
+  - `.margin-top-sm/md/lg`
+  - `.padding-all-sm/md/lg`
+  - `.gap-sm/md/lg` (for flex/grid)
+- [ ] **Testing:** Apply spacing classes, verify consistent gaps
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 8: Link Theme CSS to All HTML Pages**
+- [ ] **Task:** Add `<link>` tag to existing HTML files
+- [ ] **Files to update:**
+  - `frontend/meta-ui/public/index.html`
+  - `frontend/meta-ui/public/login.html`
+  - `frontend/meta-ui/public/register.html`
+  - `frontend/meta-ui/public/jobs.html`
+- [ ] **Add this line in `<head>` section:**
+  ```html
+  <link rel="stylesheet" href="assets/css/theme.css">
+  ```
+- [ ] **Testing:** Open each page, check in DevTools that theme.css is loaded
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 9: Test Theme on Existing Elements (NO CODE CHANGES)**
+- [ ] **Task:** Apply new theme classes to existing elements as test
+- [ ] **Test on:**
+  - One button on login page (add `.btn-primary-purple`)
+  - One input field (add `.input-purple`)
+  - One heading (add `.heading-1`)
+- [ ] **Testing:** Verify colors show correctly, no layout breaks
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 10: Create Theme Documentation**
+- [ ] **Task:** Document all theme classes for reference
+- [ ] **Create:** `frontend/meta-ui/assets/css/theme-reference.md`
+- [ ] **Include:** List of all classes, usage examples, color codes
+- [ ] **Testing:** Review documentation for completeness
+- [ ] **Status:** ⏳ Not Started
+
+---
+
+## Feature 1.2: Homepage/Landing Page Enhancement
+
+### Objective:
+Create a professional landing page with hero banner, portal description, and clear CTAs.
+
+### Implementation Todo List:
+
+#### **Point 1: Create New Homepage HTML Structure**
+- [ ] **Task:** Backup existing `index.html`, create new structure
+- [ ] **Backup:** Copy `index.html` to `index_backup.html`
+- [ ] **Create sections:**
+  - Navigation bar
+  - Hero section
+  - Features section
+  - CTA section
+  - Footer
+- [ ] **Testing:** Open index.html, verify basic structure visible
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 2: Build Navigation Bar**
+- [ ] **Task:** Add responsive navbar with logo and links
+- [ ] **Include:**
+  - Logo/site name "Meta Job Portal"
+  - Links: Home, Jobs, Login, Register
+  - Responsive hamburger menu for mobile
+- [ ] **Apply:** Theme colors from theme.css
+- [ ] **Testing:** Click all links, test responsive behavior
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 3: Create Hero Section HTML**
+- [ ] **Task:** Add hero section with headline and CTA buttons
+- [ ] **Include:**
+  - Main headline: "Find Your Dream Job at Meta"
+  - Subheadline: Job portal description
+  - Two CTA buttons: "Browse Jobs" and "Sign Up"
+  - Background gradient/color
+- [ ] **Testing:** Verify text is readable, buttons are clickable
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 4: Style Hero Section with CSS**
+- [ ] **Task:** Create hero-specific styles
+- [ ] **File:** Add styles in `assets/css/style.css` or new `homepage.css`
+- [ ] **Include:**
+  - Center alignment
+  - Large text sizing
+  - Background gradient (purple shades)
+  - Button styling with theme colors
+  - Responsive padding
+- [ ] **Testing:** Check on desktop and mobile, verify center alignment
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 5: Add Features/Benefits Section**
+- [ ] **Task:** Create 3-column feature highlight section
+- [ ] **Features to highlight:**
+  1. "Easy Application" - Simple job application process
+  2. "Top Companies" - Work with leading tech companies
+  3. "Career Growth" - Opportunities for advancement
+- [ ] **Include:** Icons (placeholder), titles, descriptions
+- [ ] **Testing:** Verify 3 columns display correctly, responsive stacking
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 6: Style Features Section**
+- [ ] **Task:** Add CSS for features section
+- [ ] **Include:**
+  - Grid/flex layout for 3 columns
+  - Card styling for each feature
+  - Icon styling
+  - Hover effects
+  - Mobile responsive (stack vertically)
+- [ ] **Testing:** Hover over cards, resize window to test responsive
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 7: Create CTA (Call-to-Action) Section**
+- [ ] **Task:** Add prominent CTA section before footer
+- [ ] **Include:**
+  - Heading: "Ready to Start Your Journey?"
+  - Two buttons: "Register Now" and "View Jobs"
+  - Background color (light lavender)
+- [ ] **Link buttons:**
+  - Register Now → `/register.html`
+  - View Jobs → `/jobs.html`
+- [ ] **Testing:** Click buttons, verify navigation works
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 8: Build Footer Section**
+- [ ] **Task:** Create footer with links and info
+- [ ] **Include:**
+  - Site name and tagline
+  - Links: About, Contact, Terms, Privacy
+  - Copyright text
+  - Social media placeholders (optional)
+- [ ] **Apply:** Dark purple background, light text
+- [ ] **Testing:** Verify footer shows on all pages, links are styled
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 9: Add Smooth Scroll Navigation**
+- [ ] **Task:** Implement smooth scroll for anchor links
+- [ ] **File:** Add JavaScript in `assets/js/homepage.js`
+- [ ] **Functionality:** When clicking nav links, smooth scroll to sections
+- [ ] **Testing:** Click nav links, verify smooth scrolling
+- [ ] **Status:** ⏳ Not Started
+
+#### **Point 10: Test Complete Homepage Flow**
+- [ ] **Task:** End-to-end testing of homepage
+- [ ] **Test:**
+  - Navigation works
+  - All buttons link correctly
+  - Responsive on mobile/tablet/desktop
+  - Colors match theme
+  - No console errors
+- [ ] **Testing:** Open homepage, click everything, resize window
+- [ ] **Status:** ⏳ Not Started
+
+---
+
+## Phase 1 Checklist Summary
+
+### Feature 1.1: Global Design System
+- [ ] Points 1-10 completed
+- [ ] All theme CSS created and documented
+- [ ] Theme applied to test elements successfully
+
+### Feature 1.2: Homepage Enhancement
+- [ ] Points 1-10 completed
+- [ ] Homepage fully functional
+- [ ] All navigation and CTAs working
+- [ ] Responsive design tested
+
+### Phase 1 Complete Criteria:
+- ✅ Color theme established
+- ✅ Reusable components created
+- ✅ Homepage looks professional
+- ✅ All existing pages still work
+- ✅ No broken functionality
+
+---
+
+**Next Phase:** Once Phase 1 is complete and tested, we'll move to Phase 2 (Authentication Pages Revamp)
+
+

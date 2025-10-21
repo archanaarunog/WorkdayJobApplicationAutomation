@@ -1,11 +1,17 @@
 
 
-# Meta Portal Job Application System (V1.0.0)
+# Meta Portal Job Application System (V1.1.0 - In Progress)
 
 **Project Title:** Meta Portal Job Application System
 
 **Description:**
-This project is a realistic, end-to-end job application portal designed for SDET/SDE learning and portfolio building. It features a FastAPI backend, SQLAlchemy ORM, JWT authentication, and a modern Bootstrap-styled frontend using vanilla HTML, CSS, and JavaScript. The system demonstrates secure user registration/login, job listing, and a functional job application workflow with modal forms.
+This project is a realistic, end-to-end job application portal designed for SDET/SDE learning and portfolio building. It features a FastAPI backend, SQLAlchemy ORM, JWT authentication, and a modern Bootstrap-styled frontend with custom purple/lavender theme. The system demonstrates secure user registration/login, job listing, and a functional job application workflow with modal forms.
+
+**Latest Updates (v1.1.0):**
+- ✨ Custom pastel purple/lavender design system implemented
+- 🎨 Professional UI/UX with centered forms, shadow effects, and hover animations
+- 📐 Consistent typography and spacing across all pages
+- 🔧 Enhanced form styling with purple focus states and labels
 
 ---
 
@@ -193,10 +199,40 @@ python3 -m http.server 8081
 ---
 
 
+## Changelog
+
+### v1.1.0 (In Progress - Phase 1 Complete)
+**Design System & UI/UX Improvements:**
+- ✅ Created global theme.css with CSS custom properties
+- ✅ Implemented pastel purple/lavender color scheme (#9B8ACB primary, #E2D9F3 light backgrounds)
+- ✅ Updated all buttons with purple styling and hover effects
+- ✅ Enhanced card components with shadows and hover animations
+- ✅ Improved form inputs with purple focus states and proper labeling
+- ✅ Added consistent typography classes (heading-1, heading-2, heading-3, text-body, text-small)
+- ✅ Implemented proper spacing and padding across all pages
+- ✅ Centered login/register forms with professional layout
+- ✅ Added background pattern with gradient effects
+- ✅ Applied theme consistently across index, login, register, and jobs pages
+
+**File Changes:**
+- Created: `frontend/meta-ui/public/assets/css/theme.css` (340+ lines)
+- Modified: All HTML files (index, login, register, jobs) with new classes and styling
+- Modified: `frontend/meta-ui/assets/js/jobs.js` for enhanced card rendering
+
+### v1.0.0 (Completed)
+- User registration and login with JWT authentication
+- Job listing and application submission
+- Bootstrap-based responsive UI
+- SQLite database with SQLAlchemy models
+- FastAPI backend with Swagger documentation
+
+---
+
 ## Known Issues / Roadmap
-- After applying, the UI disables the Apply button but does not show application history (planned for V1.1).
-- Profile and admin features are not yet implemented.
-- Error handling and edge cases will be improved in future versions.
+- Background pattern visibility may vary across browsers (gradient-based)
+- Application history view not yet implemented (planned for Phase 2)
+- Profile and admin features planned for Phase 4-5
+- Password reset functionality planned for Phase 2
 
 ---
 

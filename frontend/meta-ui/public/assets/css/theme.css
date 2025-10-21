@@ -1,0 +1,697 @@
+/*
+ * Meta Job Portal - Custom Theme
+ * Pastel Purple/Lavender Color Scheme
+ * Version: 1.0.0
+ */
+
+/* ==========================================
+   CSS VARIABLES - COLOR PALETTE
+   ========================================== */
+
+:root {
+  /* Primary Purple Shades */
+  --primary-purple: #9B8ACB;        /* Main brand purple - buttons, links */
+  --light-lavender: #E2D9F3;        /* Light backgrounds, cards */
+  --deep-purple: #6B5B95;           /* Headers, dark accents */
+  --pastel-violet: #D4CBE5;         /* Secondary elements, borders */
+  
+  /* Interactive States */
+  --hover-purple: #8878B5;          /* Button hover, link hover */
+  --active-purple: #7A6AA5;         /* Active/pressed state */
+  
+  /* Background Colors */
+  --background-light: #F8F7FC;      /* Page background */
+  --background-white: #FFFFFF;      /* Cards, containers */
+  --background-input: #FCFBFF;      /* Input fields background */
+  
+  /* Text Colors */
+  --text-dark: #333333;             /* Primary text */
+  --text-purple: #6B5B95;           /* Purple text, headings */
+  --text-light: #666666;            /* Secondary text */
+  --text-white: #FFFFFF;            /* Text on dark backgrounds */
+  
+  /* Status Colors (with purple tint) */
+  --success-color: #B5D6CD;         /* Pastel mint - success messages */
+  --error-color: #E8B4BC;           /* Soft pink - error messages */
+  --warning-color: #F4D9C6;         /* Soft peach - warnings */
+  --info-color: #C9D4E8;            /* Soft blue - info messages */
+  
+  /* Border & Shadow */
+  --border-light: #E0DBEF;          /* Light borders */
+  --border-medium: #D4CBE5;         /* Medium borders */
+  --shadow-sm: 0 2px 4px rgba(107, 91, 149, 0.1);
+  --shadow-md: 0 4px 8px rgba(107, 91, 149, 0.15);
+  --shadow-lg: 0 8px 16px rgba(107, 91, 149, 0.2);
+  
+  /* Spacing (for consistency) */
+  --spacing-xs: 0.25rem;   /* 4px */
+  --spacing-sm: 0.5rem;    /* 8px */
+  --spacing-md: 1rem;      /* 16px */
+  --spacing-lg: 1.5rem;    /* 24px */
+  --spacing-xl: 2rem;      /* 32px */
+  --spacing-xxl: 3rem;     /* 48px */
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;   /* For pills/rounded buttons */
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* ==========================================
+   BOOTSTRAP OVERRIDES
+   ========================================== */
+
+/* Override Bootstrap Primary Color */
+.btn-primary {
+  background-color: var(--primary-purple) !important;
+  border-color: var(--primary-purple) !important;
+  color: var(--text-white) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--hover-purple) !important;
+  border-color: var(--hover-purple) !important;
+}
+
+.btn-primary:active {
+  background-color: var(--active-purple) !important;
+  border-color: var(--active-purple) !important;
+}
+
+/* Override Bootstrap Secondary Color */
+.btn-secondary {
+  background-color: var(--pastel-violet) !important;
+  border-color: var(--pastel-violet) !important;
+  color: var(--text-purple) !important;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary-purple) !important;
+  color: var(--text-white) !important;
+}
+
+/* Override Bootstrap Links */
+a {
+  color: var(--primary-purple);
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--hover-purple);
+}
+
+/* Override Bootstrap Form Controls */
+.form-control {
+  border: 1px solid var(--border-medium) !important;
+  border-radius: var(--radius-md) !important;
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+  background-color: var(--background-input) !important;
+  transition: all var(--transition-fast) !important;
+  font-size: 0.95rem;
+}
+
+.form-control:focus {
+  border-color: var(--primary-purple) !important;
+  box-shadow: 0 0 0 0.2rem rgba(155, 138, 203, 0.25) !important;
+  background-color: var(--background-white) !important;
+  outline: none !important;
+}
+
+.form-control:hover {
+  border-color: var(--pastel-violet) !important;
+}
+
+.form-control::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+/* Form Label Styling */
+.form-label {
+  color: var(--text-purple) !important;
+  font-weight: 500 !important;
+  margin-bottom: var(--spacing-xs) !important;
+  font-size: 0.9rem;
+}
+
+/* ==========================================
+   CUSTOM BUTTON STYLES
+   ========================================== */
+
+.btn-primary-purple {
+  background-color: var(--primary-purple);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-primary-purple:hover {
+  background-color: var(--hover-purple);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-outline-purple {
+  background-color: transparent;
+  color: var(--primary-purple);
+  border: 2px solid var(--primary-purple);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-outline-purple:hover {
+  background-color: var(--primary-purple);
+  color: var(--text-white);
+}
+
+/* ==========================================
+   CUSTOM CARD STYLES
+   ========================================== */
+
+.card-lavender {
+  background-color: var(--light-lavender);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.card-shadow {
+  background-color: var(--background-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+}
+
+.card-shadow:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+/* Job Card Specific Styles */
+.card {
+  border: 1px solid var(--border-light) !important;
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md) !important;
+  transform: translateY(-2px);
+  border-color: var(--pastel-violet) !important;
+}
+
+/* ==========================================
+   CUSTOM INPUT STYLES
+   ========================================== */
+
+.input-purple {
+  background-color: var(--background-input);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--text-dark);
+  transition: border-color var(--transition-fast);
+}
+
+.input-purple:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(155, 138, 203, 0.1);
+}
+
+.input-error {
+  border-color: var(--error-color);
+}
+
+.input-success {
+  border-color: var(--success-color);
+}
+
+/* ==========================================
+   TYPOGRAPHY CLASSES
+   ========================================== */
+
+.heading-1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-purple);
+  line-height: 1.2;
+  margin-bottom: var(--spacing-md);
+}
+
+.heading-2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-purple);
+  line-height: 1.3;
+  margin-bottom: var(--spacing-md);
+}
+
+.heading-3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-purple);
+  line-height: 1.4;
+  margin-bottom: var(--spacing-sm);
+}
+
+.text-body {
+  font-size: 1rem;
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.text-small {
+  font-size: 0.875rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.text-purple {
+  color: var(--text-purple);
+}
+
+/* ==========================================
+   SPACING UTILITIES
+   ========================================== */
+
+.margin-top-sm { margin-top: var(--spacing-sm); }
+.margin-top-md { margin-top: var(--spacing-md); }
+.margin-top-lg { margin-top: var(--spacing-lg); }
+
+.padding-all-sm { padding: var(--spacing-sm); }
+.padding-all-md { padding: var(--spacing-md); }
+.padding-all-lg { padding: var(--spacing-lg); }
+
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+
+.bg-light-lavender {
+  background-color: var(--light-lavender);
+}
+
+.bg-purple {
+  background-color: var(--primary-purple);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+/* ==========================================
+   BACKGROUND PATTERNS
+   ========================================== */
+
+.bg-pattern {
+  background: linear-gradient(135deg, #f8f7fc 0%, #e8e4f3 25%, #f0ecf9 50%, #e2d9f3 75%, #f8f7fc 100%);
+  position: relative;
+}
+
+.bg-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(155, 138, 203, 0.4) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(212, 203, 229, 0.5) 0%, transparent 45%),
+    radial-gradient(circle at 40% 80%, rgba(226, 217, 243, 0.45) 0%, transparent 35%),
+    radial-gradient(circle at 70% 20%, rgba(155, 138, 203, 0.35) 0%, transparent 50%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 1;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-pattern-dots {
+  background-color: var(--background-light);
+  background-image: 
+    radial-gradient(circle, rgba(155, 138, 203, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.bg-pattern-waves {
+  background-color: var(--background-light);
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 35px,
+      rgba(155, 138, 203, 0.03) 35px,
+      rgba(155, 138, 203, 0.03) 70px
+    );
+}
+
+/* ==========================================
+   NAVIGATION & TABS (Phase 3.1)
+   ========================================== */
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-purple) !important;
+}
+
+.nav-tabs {
+  border-bottom: 2px solid var(--border-light);
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  color: var(--text-light);
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  margin-bottom: -2px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--primary-purple);
+  border-bottom-color: var(--light-lavender);
+  background: transparent;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-purple);
+  background-color: transparent;
+  border-bottom-color: var(--primary-purple);
+  font-weight: 600;
+}
+
+.tab-content > .tab-pane {
+  display: none;
+}
+
+.tab-content > .active {
+  display: block;
+}
+
+/* ==========================================
+   STATS CARDS (Phase 3.1)
+   ========================================== */
+
+.stats-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stats-card .card-body {
+  padding: 1.5rem;
+}
+
+.stats-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--light-lavender), var(--pastel-violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-purple);
+  font-size: 1.5rem;
+}
+
+/* ==========================================
+   JOB CARDS (Phase 3.1)
+   ========================================== */
+
+.job-card {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+  background: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.job-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-5px);
+  border-color: var(--primary-purple);
+}
+
+.job-card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.job-card-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+.job-card-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-light);
+  background-color: var(--background-light);
+}
+
+.company-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--light-lavender), var(--background-white));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--primary-purple);
+  font-weight: 700;
+  border: 2px solid var(--border-light);
+}
+
+.job-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.company-name {
+  font-size: 1rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* ==========================================
+   BADGES & TAGS (Phase 3.1)
+   ========================================== */
+
+.badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-purple {
+  background-color: var(--light-lavender);
+  color: var(--deep-purple);
+}
+
+.badge-location {
+  background-color: #E8F4F8;
+  color: #2C7A9B;
+}
+
+.badge-type {
+  background-color: #F0F9E8;
+  color: #4A7C2C;
+}
+
+.badge-salary {
+  background-color: #FFF4E6;
+  color: #B8690A;
+}
+
+.job-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: var(--background-light);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.job-tag:hover {
+  background-color: var(--light-lavender);
+  border-color: var(--primary-purple);
+  color: var(--primary-purple);
+}
+
+/* ==========================================
+   JOB METADATA (Phase 3.1)
+   ========================================== */
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.job-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.job-meta-item i {
+  color: var(--primary-purple);
+}
+
+/* ==========================================
+   STATUS BADGES (Phase 3.1)
+   ========================================== */
+
+.status-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.status-pending {
+  background-color: #FFF4E6;
+  color: #B8690A;
+}
+
+.status-accepted {
+  background-color: #E6F9F0;
+  color: #0A7D3E;
+}
+
+.status-rejected {
+  background-color: #FFE6E6;
+  color: #C41E3A;
+}
+
+.status-reviewing {
+  background-color: #E8F4F8;
+  color: #2C7A9B;
+}
+
+/* ==========================================
+   SAVE/BOOKMARK BUTTON (Phase 3.1)
+   ========================================== */
+
+.btn-save {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background-color: var(--light-lavender);
+  border-color: var(--primary-purple);
+  color: var(--primary-purple);
+}
+
+.btn-save.saved {
+  background-color: var(--primary-purple);
+  border-color: var(--primary-purple);
+  color: white;
+}
+
+/* ==========================================
+   TABLE STYLES (Phase 3.1)
+   ========================================== */
+
+.table thead {
+  border-bottom: 2px solid var(--border-medium);
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--text-purple);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+}
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(--background-light);
+}
+
+/* ==========================================
+   FILTER SIDEBAR (Phase 3.1)
+   ========================================== */
+
+.sticky-top {
+  position: sticky;
+  z-index: 10;
+}
+
+/* ==========================================
+   RESPONSIVE UTILITIES (Phase 3.1)
+   ========================================== */
+
+@media (max-width: 991px) {
+  .job-card {
+    margin-bottom: 1rem;
+  }
+  
+  .stats-card {
+    margin-bottom: 1rem;
+  }
+}
