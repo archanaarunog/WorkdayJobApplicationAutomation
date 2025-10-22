@@ -637,6 +637,17 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Logout button
   document.getElementById('logoutBtn')?.addEventListener('click', function() {
     localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    window.location.href = 'login.html';
+  });
+  
+  // Logout link (navigation)
+  document.getElementById('logoutLink')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
     window.location.href = 'login.html';
   });
   

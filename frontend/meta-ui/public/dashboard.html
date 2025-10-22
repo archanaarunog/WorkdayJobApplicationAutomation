@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Dashboard - Meta Portal</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom Theme CSS -->
+  <link rel="stylesheet" href="assets/css/theme.css?v=1.1.7">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #F8F6FC 0%, #EDE9F5 100%);
+      min-height: 100vh;
+    }
+    
+    .navbar {
+      background: linear-gradient(135deg, #9B8ACB, #6B5B95) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: white !important;
+    }
+    
+    .nav-link {
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      color: white !important;
+      transform: translateY(-2px);
+    }
+    
+    .nav-link.active {
+      color: white !important;
+      border-bottom: 2px solid white;
+    }
+    
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .dashboard-header {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-subtitle {
+      color: #666;
+      font-size: 1rem;
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .stat-icon.total {
+      background: linear-gradient(135deg, #E8E5F3, #D4CBE5);
+      color: #6B5B95;
+    }
+    
+    .stat-icon.pending {
+      background: linear-gradient(135deg, #FFF4E6, #FFE8CC);
+      color: #E8A93C;
+    }
+    
+    .stat-icon.interview {
+      background: linear-gradient(135deg, #E6F7F0, #CCEFE0);
+      color: #4A7C2C;
+    }
+    
+    .stat-icon.rejected {
+      background: linear-gradient(135deg, #FFE6E6, #FFCCCC);
+      color: #C41E3A;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .filters-section {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .filter-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .filter-btn {
+      padding: 0.5rem 1.25rem;
+      border: 2px solid #E0DBEF;
+      border-radius: 8px;
+      background: white;
+      color: #666;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .filter-btn:hover {
+      border-color: #9B8ACB;
+      color: #6B5B95;
+    }
+    
+    .filter-btn.active {
+      background: linear-gradient(135deg, #9B8ACB, #6B5B95);
+      color: white;
+      border-color: #9B8ACB;
+    }
+    
+    .sort-select {
+      padding: 0.5rem 1rem;
+      border: 2px solid #E0DBEF;
+      border-radius: 8px;
+      color: #666;
+      font-weight: 500;
+      cursor: pointer;
+      background: white;
+    }
+    
+    .sort-select:focus {
+      outline: none;
+      border-color: #9B8ACB;
+    }
+    
+    .applications-container {
+      display: grid;
+      gap: 1.5rem;
+    }
+    
+    .application-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    
+    .application-card:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .application-info {
+      flex: 1;
+    }
+    
+    .job-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .company-name {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .job-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .job-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .job-detail-item i {
+      color: #9B8ACB;
+    }
+    
+    .application-dates {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #F0EDF7;
+    }
+    
+    .date-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #999;
+      font-size: 0.85rem;
+    }
+    
+    .application-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+    
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      min-width: 120px;
+    }
+    
+    .status-badge.submitted {
+      background: linear-gradient(135deg, #E6F2FF, #CCE5FF);
+      color: #0066CC;
+    }
+    
+    .status-badge.in_review {
+      background: linear-gradient(135deg, #FFF4E6, #FFE8CC);
+      color: #E8A93C;
+    }
+    
+    .status-badge.interview {
+      background: linear-gradient(135deg, #E6F7F0, #CCEFE0);
+      color: #4A7C2C;
+    }
+    
+    .status-badge.rejected {
+      background: linear-gradient(135deg, #FFE6E6, #FFCCCC);
+      color: #C41E3A;
+    }
+    
+    .status-badge.accepted {
+      background: linear-gradient(135deg, #E6F7E6, #CCEFCC);
+      color: #2E7D32;
+    }
+    
+    .btn-view-details {
+      padding: 0.5rem 1.25rem;
+      background: linear-gradient(135deg, #9B8ACB, #6B5B95);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .btn-view-details:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(107, 91, 149, 0.4);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .empty-icon {
+      font-size: 4rem;
+      color: #E0DBEF;
+      margin-bottom: 1.5rem;
+    }
+    
+    .empty-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.75rem;
+    }
+    
+    .empty-text {
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    
+    .btn-browse-jobs {
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #9B8ACB, #6B5B95);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-browse-jobs:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(107, 91, 149, 0.4);
+      color: white;
+    }
+    
+    .loading-state {
+      text-align: center;
+      padding: 3rem;
+    }
+    
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      border-width: 3px;
+      color: #9B8ACB;
+    }
+    
+    @media (max-width: 768px) {
+      .application-card {
+        grid-template-columns: 1fr;
+      }
+      
+      .application-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="bi bi-briefcase-fill me-2"></i>Meta Portal
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link" href="jobs.html">
+              <i class="bi bi-search me-1"></i>Browse Jobs
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="dashboard.html">
+              <i class="bi bi-grid-fill me-1"></i>My Dashboard
+            </a>
+          </li>
+          <li class="nav-item ms-lg-3">
+            <button class="btn btn-logout" id="logoutBtn">
+              <i class="bi bi-box-arrow-right me-1"></i>Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Main Container -->
+  <div class="container py-5">
+    
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">
+        <i class="bi bi-grid-fill me-2" style="color: #9B8ACB;"></i>
+        Welcome back, <span id="userName">User</span>!
+      </h1>
+      <p class="dashboard-subtitle">Track your job applications and stay updated on your progress</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="stats-container" id="statsContainer">
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="bi bi-file-text-fill"></i>
+        </div>
+        <div class="stat-number" id="totalApplications">0</div>
+        <div class="stat-label">Total Applications</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="bi bi-clock-fill"></i>
+        </div>
+        <div class="stat-number" id="pendingApplications">0</div>
+        <div class="stat-label">In Review</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon interview">
+          <i class="bi bi-calendar-check-fill"></i>
+        </div>
+        <div class="stat-number" id="interviewApplications">0</div>
+        <div class="stat-label">Interview Stage</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon rejected">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="stat-number" id="rejectedApplications">0</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+    </div>
+    
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="filter-group">
+        <span style="color: #666; font-weight: 600;">Filter by Status:</span>
+        <button class="filter-btn active" data-status="all">All</button>
+        <button class="filter-btn" data-status="submitted">Submitted</button>
+        <button class="filter-btn" data-status="in_review">In Review</button>
+        <button class="filter-btn" data-status="interview">Interview</button>
+        <button class="filter-btn" data-status="rejected">Rejected</button>
+        <button class="filter-btn" data-status="accepted">Accepted</button>
+        
+        <div class="ms-auto">
+          <select class="sort-select" id="sortSelect">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="company">Company A-Z</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Loading State -->
+    <div class="loading-state" id="loadingState">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3" style="color: #666;">Loading your applications...</p>
+    </div>
+    
+    <!-- Applications Container -->
+    <div class="applications-container" id="applicationsContainer" style="display: none;">
+      <!-- Applications will be dynamically inserted here -->
+    </div>
+    
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-icon">
+        <i class="bi bi-inbox"></i>
+      </div>
+      <h2 class="empty-title">No Applications Yet</h2>
+      <p class="empty-text">You haven't applied to any jobs yet. Start exploring opportunities!</p>
+      <a href="jobs.html" class="btn-browse-jobs">
+        <i class="bi bi-search me-2"></i>Browse Jobs
+      </a>
+    </div>
+    
+  </div>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Dashboard JS -->
+  <script src="assets/js/dashboard.js?v=1.1.7"></script>
+  
+</body>
+</html>

@@ -216,8 +216,14 @@ loginForm.addEventListener('submit', async function(e) {
     if (response.ok) {
       const result = await response.json();
       
-      // Save token
+      // Save token and user info
       localStorage.setItem('token', result.access_token);
+      localStorage.setItem('userEmail', email);
+      
+      // Try to fetch user's full name from the API (if available)
+      // For now, we'll extract from email
+      const userName = email.split('@')[0];
+      localStorage.setItem('userName', userName);
       
       // Handle "Remember Me"
       if (rememberMe) {
