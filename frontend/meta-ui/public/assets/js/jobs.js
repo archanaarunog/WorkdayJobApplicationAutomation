@@ -6,8 +6,13 @@
 // ==================== Global State ====================
 let allJobs = [];
 let filteredJobs = [];
+let displayedJobs = [];
 let allApplications = [];
 const API_BASE = 'http://localhost:8000/api';
+
+// Pagination State
+let currentPage = 1;
+const JOBS_PER_PAGE = 10;
 
 // ==================== Utility Functions ====================
 
@@ -217,6 +222,8 @@ function renderJobs() {
   const container = document.getElementById('jobsContainer');
   const loadingState = document.getElementById('loadingState');
   const emptyState = document.getElementById('emptyState');
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  const loadMoreContainer = document.getElementById('loadMoreContainer');
   
   // Hide loading and empty states
   loadingState.style.display = 'none';
@@ -225,12 +232,52 @@ function renderJobs() {
   if (filteredJobs.length === 0) {
     container.innerHTML = '';
     emptyState.style.display = 'block';
-    document.getElementById('jobsDisplayCount').textContent = '0';
+    loadMoreContainer.style.display = 'none';
+    
+    // Update job count to 0
+    const jobsDisplayCount = document.getElementById('jobsDisplayCount');
+    if (jobsDisplayCount) {
+      jobsDisplayCount.textContent = '0';
+    }
     return;
   }
   
-  container.innerHTML = filteredJobs.map(job => renderJobCard(job)).join('');
-  document.getElementById('jobsDisplayCount').textContent = filteredJobs.length;
+  // Calculate displayed jobs based on current page
+  const endIndex = currentPage * JOBS_PER_PAGE;
+  displayedJobs = filteredJobs.slice(0, endIndex);
+  
+  // Render displayed jobs
+  container.innerHTML = displayedJobs.map(job => renderJobCard(job)).join('');
+  
+  // Show/hide Load More button
+  if (displayedJobs.length < filteredJobs.length) {
+    loadMoreContainer.style.display = 'block';
+    loadMoreBtn.disabled = false;
+    loadMoreBtn.innerHTML = '<i class="bi bi-arrow-down-circle me-2"></i>Load More Jobs';
+    
+    // Update count
+    document.getElementById('displayedCount').textContent = displayedJobs.length;
+    document.getElementById('totalCount').textContent = filteredJobs.length;
+  } else {
+    if (filteredJobs.length > JOBS_PER_PAGE) {
+      // Show "All jobs loaded" message
+      loadMoreContainer.style.display = 'block';
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>All Jobs Loaded';
+      
+      // Update count
+      document.getElementById('displayedCount').textContent = displayedJobs.length;
+      document.getElementById('totalCount').textContent = filteredJobs.length;
+    } else {
+      loadMoreContainer.style.display = 'none';
+    }
+  }
+  
+  // Update job count in header (above the grid)
+  const jobsDisplayCount = document.getElementById('jobsDisplayCount');
+  if (jobsDisplayCount) {
+    jobsDisplayCount.textContent = displayedJobs.length;
+  }
   
   // Attach event listeners to Apply buttons
   document.querySelectorAll('.apply-btn').forEach(btn => {
@@ -313,6 +360,8 @@ function applyFilters() {
     return true;
   });
   
+  // Reset pagination when filters change
+  currentPage = 1;
   renderJobs();
 }
 
@@ -327,7 +376,31 @@ function clearFilters() {
   document.getElementById('internship').checked = false;
   
   filteredJobs = [...allJobs];
+  currentPage = 1;
   renderJobs();
+}
+
+// ==================== Pagination Functions ====================
+
+function loadMoreJobs() {
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  
+  // Show loading state
+  loadMoreBtn.disabled = true;
+  loadMoreBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+  
+  // Simulate slight delay for UX (optional)
+  setTimeout(() => {
+    currentPage++;
+    renderJobs();
+    
+    // Scroll to first new job smoothly
+    const firstNewJobIndex = (currentPage - 1) * JOBS_PER_PAGE;
+    const jobCards = document.querySelectorAll('.job-card');
+    if (jobCards[firstNewJobIndex]) {
+      jobCards[firstNewJobIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 300);
 }
 
 // ==================== Sort Function ====================
@@ -584,6 +657,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('contract')?.addEventListener('change', applyFilters);
   document.getElementById('internship')?.addEventListener('change', applyFilters);
   document.getElementById('clearFiltersBtn')?.addEventListener('click', clearFilters);
+  
+  // Pagination - Load More button
+  document.getElementById('loadMoreBtn')?.addEventListener('click', loadMoreJobs);
   
   // Sort event listener
   document.getElementById('sortSelect')?.addEventListener('change', sortJobs);
