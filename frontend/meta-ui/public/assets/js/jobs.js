@@ -26,6 +26,13 @@ function formatSalary(salary) {
   return `$${salary.toLocaleString()}`;
 }
 
+function formatSalaryRange(salaryMin, salaryMax) {
+  if (!salaryMin && !salaryMax) return '$50k - $100k';
+  if (salaryMin && !salaryMax) return `$${(salaryMin/1000).toFixed(0)}k+`;
+  if (!salaryMin && salaryMax) return `Up to $${(salaryMax/1000).toFixed(0)}k`;
+  return `$${(salaryMin/1000).toFixed(0)}k - $${(salaryMax/1000).toFixed(0)}k`;
+}
+
 function getCompanyInitial(companyName) {
   return companyName ? companyName.charAt(0).toUpperCase() : 'C';
 }
@@ -164,15 +171,15 @@ function renderJobCard(job) {
           <div class="job-meta mb-3">
             <div class="job-meta-item">
               <i class="bi bi-currency-dollar"></i>
-              <span>${job.salary ? formatSalary(job.salary) : '$50k - $100k'}</span>
+              <span>${formatSalaryRange(job.salary_min, job.salary_max)}</span>
             </div>
             <div class="job-meta-item">
               <i class="bi bi-clock"></i>
-              <span>${job.experience || '2-5 years'}</span>
+              <span>${job.experience_level || '2-5 years'}</span>
             </div>
             <div class="job-meta-item">
               <i class="bi bi-calendar3"></i>
-              <span>Posted ${formatDate(job.created_at)}</span>
+              <span>Posted ${formatDate(job.posted_date)}</span>
             </div>
             <div class="job-meta-item">
               <i class="bi bi-people"></i>
@@ -294,12 +301,13 @@ function applyFilters() {
     }
     
     // Salary filter
-    if (salaryFilter && job.salary) {
-      const salary = job.salary;
-      if (salaryFilter === '0-50k' && (salary < 0 || salary > 50000)) return false;
-      if (salaryFilter === '50k-100k' && (salary < 50000 || salary > 100000)) return false;
-      if (salaryFilter === '100k-150k' && (salary < 100000 || salary > 150000)) return false;
-      if (salaryFilter === '150k+' && salary < 150000) return false;
+    if (salaryFilter && (job.salary_min || job.salary_max)) {
+      const salaryMin = job.salary_min || 0;
+      const salaryMax = job.salary_max || 999999;
+      if (salaryFilter === '0-50k' && (salaryMax < 0 || salaryMin > 50000)) return false;
+      if (salaryFilter === '50k-100k' && (salaryMax < 50000 || salaryMin > 100000)) return false;
+      if (salaryFilter === '100k-150k' && (salaryMax < 100000 || salaryMin > 150000)) return false;
+      if (salaryFilter === '150k+' && salaryMax < 150000) return false;
     }
     
     return true;
@@ -419,7 +427,68 @@ function handleSaveClick(event) {
 
 function handleViewDetailsClick(event) {
   const jobId = event.currentTarget.getAttribute('data-job-id');
-  alert(`Job Details Modal Coming Soon (Job ID: ${jobId})\n\nThis will be implemented in Phase 3.2`);
+  showJobDetailsModal(jobId);
+}
+
+// ==================== Job Details Modal ====================
+
+function showJobDetailsModal(jobId) {
+  const job = allJobs.find(j => j.id == jobId);
+  if (!job) {
+    alert('Job not found');
+    return;
+  }
+  
+  // Populate header information
+  const companyInitial = getCompanyInitial(job.company || 'Company');
+  document.getElementById('detailCompanyLogo').textContent = companyInitial;
+  document.getElementById('detailJobTitle').textContent = job.title;
+  document.getElementById('detailCompanyName').textContent = job.company || 'Company Name';
+  
+  // Badges
+  document.getElementById('detailLocation').innerHTML = `<i class="bi bi-geo-alt me-1"></i>${job.location || 'Remote'}`;
+  document.getElementById('detailJobType').innerHTML = `<i class="bi bi-briefcase me-1"></i>${job.job_type || 'Full-time'}`;
+  document.getElementById('detailSalary').innerHTML = `<i class="bi bi-currency-dollar me-1"></i>${formatSalaryRange(job.salary_min, job.salary_max)}`;
+  document.getElementById('detailPostedDate').innerHTML = `<i class="bi bi-calendar3 me-1"></i>Posted ${formatDate(job.created_at)}`;
+  
+  // Job description
+  document.getElementById('detailDescription').innerHTML = job.description ? 
+    `<p>${job.description}</p>` : 
+    '<p>No description available for this position.</p>';
+  
+  // Requirements (parse from description or use mock data)
+  const requirements = [
+    'Proven experience in the relevant field',
+    'Strong technical skills and knowledge',
+    'Excellent problem-solving abilities',
+    'Good communication and teamwork skills',
+    'Ability to work independently and meet deadlines',
+    'Passion for learning and professional growth'
+  ];
+  
+  const requirementsList = requirements.map(req => `<li>${req}</li>`).join('');
+  document.getElementById('detailRequirements').innerHTML = requirementsList;
+  
+  // Skills
+  const skills = job.skills || ['Python', 'JavaScript', 'React', 'Node.js', 'SQL', 'Git'];
+  const skillsHtml = skills.map(skill => 
+    `<span class="job-tag" style="background-color: var(--light-lavender); color: var(--primary-purple); border: 1px solid var(--primary-purple);">${skill}</span>`
+  ).join('');
+  document.getElementById('detailSkills').innerHTML = skillsHtml;
+  
+  // Experience
+  document.getElementById('detailExperience').textContent = job.experience || '2-5 years';
+  
+  // Company info
+  document.getElementById('detailCompanyNameFull').textContent = job.company || 'Company Name';
+  
+  // Store job ID for apply button
+  document.getElementById('applyFromDetailsBtn').setAttribute('data-job-id', jobId);
+  document.getElementById('applyFromDetailsBtn').setAttribute('data-job-title', job.title);
+  
+  // Show modal
+  const modal = new bootstrap.Modal(document.getElementById('jobDetailsModal'));
+  modal.show();
 }
 
 // ==================== Applications Tab ====================
@@ -521,6 +590,19 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   // Application modal submit
   document.getElementById('submitApplicationBtn')?.addEventListener('click', handleApplicationSubmit);
+  
+  // Apply from job details modal
+  document.getElementById('applyFromDetailsBtn')?.addEventListener('click', function() {
+    const jobId = this.getAttribute('data-job-id');
+    const jobTitle = this.getAttribute('data-job-title');
+    // Close details modal
+    const detailsModal = bootstrap.Modal.getInstance(document.getElementById('jobDetailsModal'));
+    if (detailsModal) {
+      detailsModal.hide();
+    }
+    // Open application modal
+    showApplicationModal(jobId, jobTitle);
+  });
   
   // Refresh applications button
   document.getElementById('refreshApplicationsBtn')?.addEventListener('click', loadApplicationsTab);

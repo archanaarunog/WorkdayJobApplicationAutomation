@@ -20,6 +20,7 @@ class Job(Base):
     
     # Job information
     title = Column(String(200), nullable=False, index=True)  # Indexed for searching
+    company = Column(String(100), nullable=True)  # Company name
     department = Column(String(100), nullable=True)
     location = Column(String(100), nullable=False)
     job_type = Column(String(50), default="Full-time", nullable=False)  # Full-time, Part-time, Contract

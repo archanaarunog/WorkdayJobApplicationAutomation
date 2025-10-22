@@ -46,6 +46,7 @@ class UserRead(BaseModel):
 # Job Schemas
 class JobCreate(BaseModel):
     title: str
+    company: Optional[str]
     department: Optional[str]
     location: str
     job_type: Optional[str] = "Full-time"
@@ -58,6 +59,7 @@ class JobCreate(BaseModel):
 class JobRead(BaseModel):
     id: int
     title: str
+    company: Optional[str]
     department: Optional[str]
     location: str
     job_type: str
