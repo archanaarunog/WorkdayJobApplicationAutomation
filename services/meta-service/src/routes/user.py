@@ -73,6 +73,32 @@ def login_user(form: schemas.UserLogin, db: Session = Depends(get_db)):
     token = auth.create_access_token({"sub": user.email})
     return {"access_token": token, "token_type": "bearer"}
 
+@router.get("/me", response_model=schemas.UserRead)
+def get_current_user_profile(current_user: User = Depends(get_current_user)):
+    """
+    Get the current authenticated user's profile information.
+    """
+    return current_user
+
+@router.patch("/me", response_model=schemas.UserRead)
+def update_current_user_profile(
+    user_update: schemas.UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Update the current authenticated user's profile information.
+    Only provided fields will be updated.
+    """
+    update_data = user_update.model_dump(exclude_unset=True)
+    
+    for field, value in update_data.items():
+        setattr(current_user, field, value)
+    
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
 
 
 

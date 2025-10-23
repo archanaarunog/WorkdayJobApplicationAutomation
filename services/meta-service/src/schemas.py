@@ -36,12 +36,29 @@ class UserRead(BaseModel):
     first_name: str
     last_name: str
     phone: str
+    bio: Optional[str]
+    skills: Optional[str]
+    experience: Optional[str]
+    education: Optional[str]
+    linkedin_url: Optional[str]
+    github_url: Optional[str]
     is_active: bool
     created_at: datetime
     updated_at: Optional[datetime]
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
+    bio: Optional[str] = None
+    skills: Optional[str] = None
+    experience: Optional[str] = None
+    education: Optional[str] = None
+    linkedin_url: Optional[str] = None
+    github_url: Optional[str] = None
 
 # Job Schemas
 class JobCreate(BaseModel):

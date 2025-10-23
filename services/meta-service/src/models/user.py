@@ -26,6 +26,14 @@ class User(Base):
     last_name = Column(String(100), nullable=False)
     phone = Column(String(20), nullable=False)  # Required field as per user story
     
+    # Optional profile fields
+    bio = Column(String(500), nullable=True)  # Short bio/summary
+    skills = Column(String(500), nullable=True)  # Comma-separated skills
+    experience = Column(String(1000), nullable=True)  # Work experience summary
+    education = Column(String(500), nullable=True)  # Education details
+    linkedin_url = Column(String(255), nullable=True)  # LinkedIn profile
+    github_url = Column(String(255), nullable=True)  # GitHub profile
+    
     # Timestamps - automatically track when records are created/updated
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

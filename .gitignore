@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.pyc
+*.pyo
+*.pyd
 .Python
 env/
 build/
@@ -21,6 +24,9 @@ wheels/
 .installed.cfg
 *.egg
 .pytest_cache/
+*.log
+*.pot
+*.mo
 
 # Node/React
 node_modules/
@@ -35,11 +41,17 @@ yarn-error.log*
 
 # IDEs and editors
 .idea/
-.vscode/
+.vscode/settings.json
+.vscode/launch.json
 *.swp
 *.swo
+*.bak
+*.tmp
+*~
 .DS_Store
 .env
+.history/
+*.code-workspace
 
 # Database
 *.sqlite
@@ -55,6 +67,22 @@ coverage.xml
 
 # Virtual Environment
 venv/
+venv_*/
 .env/
 .venv/
 ENV/
+env.bak/
+venv.bak/
+
+# Project specific
+databases/*.db
+databases/*.sqlite
+databases/*.sqlite3
+*.log
+.cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
