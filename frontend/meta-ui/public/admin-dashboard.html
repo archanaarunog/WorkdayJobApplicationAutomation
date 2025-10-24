@@ -97,7 +97,32 @@
       <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
     </h1>
     
-    <!-- Statistics Cards -->
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
+          <i class="bi bi-speedometer2 me-1"></i>Dashboard
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="applications-tab" data-bs-toggle="tab" data-bs-target="#applications" type="button" role="tab">
+          <i class="bi bi-folder2-open me-1"></i>Applications
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="jobs-tab" data-bs-toggle="tab" data-bs-target="#jobs" type="button" role="tab">
+          <i class="bi bi-briefcase me-1"></i>Job Management
+        </button>
+      </li>
+    </ul>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabContent">
+    
+      <!-- Dashboard Tab -->
+      <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+        
+        <!-- Statistics Cards -->
     <div class="row g-4 mb-4">
       <div class="col-md-3">
         <div class="stats-card">
@@ -125,10 +150,15 @@
       </div>
     </div>
     
-    <!-- Applications Table -->
-    <div class="table-container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><i class="bi bi-folder2-open me-2"></i>Applications</h3>
+      </div>
+      
+      <!-- Applications Tab -->
+      <div class="tab-pane fade" id="applications" role="tabpanel">
+        
+        <!-- Applications Table -->
+        <div class="table-container">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="bi bi-folder2-open me-2"></i>Applications Management</h3>
         <div>
           <button class="btn btn-sm btn-outline-secondary filter-btn" data-status="all">All</button>
           <button class="btn btn-sm btn-outline-primary filter-btn" data-status="submitted">Submitted</button>
@@ -165,6 +195,194 @@
       </div>
     </div>
     
+      </div>
+      
+      <!-- Job Management Tab -->
+      <div class="tab-pane fade" id="jobs" role="tabpanel">
+        
+        <!-- Job Analytics Cards -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number" id="totalJobsCount">0</div>
+              <div class="stats-label">Total Jobs</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number" id="activeJobsCount">0</div>
+              <div class="stats-label">Active Jobs</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number" id="jobsWithoutApps">0</div>
+              <div class="stats-label">No Applications</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stats-card">
+              <div class="stats-number" id="avgApplications">0</div>
+              <div class="stats-label">Avg Applications</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Jobs Management Table -->
+        <div class="table-container">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="bi bi-briefcase me-2"></i>Job Management</h3>
+            <div>
+              <button class="btn btn-primary" id="createJobBtn">
+                <i class="bi bi-plus-circle me-1"></i>Create New Job
+              </button>
+              <button class="btn btn-outline-secondary ms-2" id="refreshJobsBtn">
+                <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+              </button>
+            </div>
+          </div>
+          
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Job Title</th>
+                  <th>Company</th>
+                  <th>Location</th>
+                  <th>Department</th>
+                  <th>Applications</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="jobsTable">
+                <tr>
+                  <td colspan="8" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+      
+    </div> <!-- End tab-content -->
+    
+  </div> <!-- End container -->
+  
+  <!-- Job Creation/Edit Modal -->
+  <div class="modal fade" id="jobModal" tabindex="-1" aria-labelledby="jobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="jobModalLabel">Create New Job</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="jobForm">
+            <input type="hidden" id="jobId">
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="jobTitle" class="form-label">Job Title *</label>
+                <input type="text" class="form-control" id="jobTitle" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="jobCompany" class="form-label">Company *</label>
+                <input type="text" class="form-control" id="jobCompany" required>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="jobDepartment" class="form-label">Department</label>
+                <select class="form-control" id="jobDepartment">
+                  <option value="">Select Department</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Product">Product</option>
+                  <option value="Design">Design</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Sales">Sales</option>
+                  <option value="HR">Human Resources</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Operations">Operations</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="jobLocation" class="form-label">Location *</label>
+                <input type="text" class="form-control" id="jobLocation" required>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="jobDescription" class="form-label">Job Description *</label>
+              <textarea class="form-control" id="jobDescription" rows="4" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="jobRequirements" class="form-label">Requirements</label>
+              <textarea class="form-control" id="jobRequirements" rows="3" placeholder="List job requirements (one per line)"></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="jobBenefits" class="form-label">Benefits</label>
+              <textarea class="form-control" id="jobBenefits" rows="3" placeholder="List benefits and perks"></textarea>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="salaryMin" class="form-label">Minimum Salary</label>
+                <input type="number" class="form-control" id="salaryMin" placeholder="50000">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="salaryMax" class="form-label">Maximum Salary</label>
+                <input type="number" class="form-control" id="salaryMax" placeholder="80000">
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="jobType" class="form-label">Job Type</label>
+                <select class="form-control" id="jobType">
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="remoteOptions" class="form-label">Remote Options</label>
+                <select class="form-control" id="remoteOptions">
+                  <option value="On-site">On-site</option>
+                  <option value="Remote">Remote</option>
+                  <option value="Hybrid">Hybrid</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="jobActive" checked>
+                <label class="form-check-label" for="jobActive">
+                  Active (visible to candidates)
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveJobBtn">
+            <i class="bi bi-check-circle me-1"></i>Save Job
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>

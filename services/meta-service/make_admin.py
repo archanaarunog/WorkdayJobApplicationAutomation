@@ -15,6 +15,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from sqlalchemy.orm import Session
 from src.config.database import engine
 from src.models.user import User
+from src.models.application import Application  # Import to avoid relationship errors
+from src.models.job import Job  # Import to avoid relationship errors
 
 def make_admin(email: str):
     """Make a user an admin by email."""

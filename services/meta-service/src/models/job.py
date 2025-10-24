@@ -33,6 +33,7 @@ class Job(Base):
     # Job details (Text allows longer content than String)
     description = Column(Text, nullable=False)
     requirements = Column(Text, nullable=True)
+    # TODO: Add benefits and remote_options columns later via migration
     
     # Timestamps and status
     posted_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
