@@ -43,6 +43,7 @@ class UserRead(BaseModel):
     linkedin_url: Optional[str]
     github_url: Optional[str]
     is_active: bool
+    is_admin: bool
     created_at: datetime
     updated_at: Optional[datetime]
 

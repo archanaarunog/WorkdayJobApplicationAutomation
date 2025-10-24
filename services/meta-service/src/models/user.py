@@ -38,11 +38,9 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    
-    
-
     # Status tracking
     is_active = Column(Boolean, default=True, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)  # Admin role flag
 
     # Relationship: All job applications submitted by this user
     # This allows you to do: user.applications to get a list of Application objects

@@ -19,10 +19,11 @@ from src.config.database import engine, Base
 from src.models import user, job, application
 
 
-# Import user, job, and application routers
+# Import user, job, application, and admin routers
 from src.routes import user as user_routes
 from src.routes import job as job_routes
 from src.routes import applications as applications_routes
+from src.routes import admin as admin_routes
 
 
 # Create all database tables from models (run once at startup)
@@ -57,10 +58,11 @@ app.add_middleware(
 
 
 
-# Register the user, job, and application routers
+# Register the user, job, application, and admin routers
 app.include_router(user_routes.router)
 app.include_router(job_routes.router)
 app.include_router(applications_routes.router)
+app.include_router(admin_routes.router)
 
 
 # Health check endpoint (optional, for testing server status)
