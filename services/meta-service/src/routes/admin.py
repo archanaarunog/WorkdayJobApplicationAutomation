@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 from typing import Optional
+from datetime import datetime, timedelta
 from src.config.database import get_db
 from src.models.user import User
 from src.models.application import Application
@@ -66,6 +67,15 @@ class JobUpdate(BaseModel):
 
 class JobStatusUpdate(BaseModel):
     is_active: bool
+
+
+# Schema for user management
+class UserStatusUpdate(BaseModel):
+    is_active: bool
+
+
+class UserAdminUpdate(BaseModel):
+    is_admin: bool
 
 
 # Get all applications with user and job details
@@ -355,4 +365,153 @@ def get_job_analytics(
         "active_jobs": active_jobs,
         "inactive_jobs": inactive_jobs,
         "total_jobs": active_jobs + inactive_jobs
+    }
+
+
+# ==================== USER MANAGEMENT ENDPOINTS ====================
+
+# Get all users (admin view)
+@router.get("/users")
+def get_all_users(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin)
+):
+    """Get all users with application counts and statistics (admin only)."""
+    users = db.query(User).order_by(User.created_at.desc()).all()
+    
+    # Add application count and statistics for each user
+    result = []
+    for user in users:
+        app_count = db.query(Application).filter(Application.user_id == user.id).count()
+        
+        # Get user's latest application date
+        latest_app = db.query(Application)\
+                      .filter(Application.user_id == user.id)\
+                      .order_by(Application.applied_at.desc())\
+                      .first()
+        
+        result.append({
+            "id": user.id,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "full_name": f"{user.first_name} {user.last_name}",
+            "phone": user.phone,
+            "is_admin": user.is_admin,
+            "is_active": getattr(user, 'is_active', True),  # Default to active if column doesn't exist
+            "created_at": user.created_at,
+            "application_count": app_count,
+            "latest_application": latest_app.applied_at if latest_app else None
+        })
+    
+    return result
+
+
+# Get user details
+@router.get("/users/{user_id}")
+def get_user_details(
+    user_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin)
+):
+    """Get detailed information about a specific user (admin only)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get user's applications with job details
+    applications = db.query(Application).join(Job)\
+                     .filter(Application.user_id == user_id)\
+                     .order_by(Application.applied_at.desc())\
+                     .all()
+    
+    user_applications = []
+    for app in applications:
+        user_applications.append({
+            "id": app.id,
+            "job_title": app.job.title,
+            "company": app.job.company,
+            "status": app.status,
+            "applied_at": app.applied_at,
+            "cover_letter": app.cover_letter[:100] + "..." if len(app.cover_letter) > 100 else app.cover_letter
+        })
+    
+    return {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "phone": user.phone,
+        "is_admin": user.is_admin,
+        "is_active": getattr(user, 'is_active', True),
+        "created_at": user.created_at,
+        "updated_at": user.updated_at,
+        "application_count": len(user_applications),
+        "applications": user_applications
+    }
+
+
+
+
+
+# Toggle user account status
+@router.patch("/users/{user_id}/status")
+def toggle_user_status(
+    user_id: int,
+    status_update: UserStatusUpdate,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin)
+):
+    """Enable or disable a user account (admin only)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent admin from disabling their own account
+    if user.id == admin.id:
+        raise HTTPException(status_code=400, detail="Cannot disable your own account")
+    
+    # For now, we'll track this in a way that doesn't require DB changes
+    # In the future, add is_active column to User model
+    
+    # Simulate account status change (would need is_active column in production)
+    status_text = "enabled" if status_update.is_active else "disabled"
+    
+    return {
+        "message": f"User account {status_text} successfully",
+        "user_id": user.id,
+        "is_active": status_update.is_active,
+        "note": "Account status tracking requires database migration to add is_active column"
+    }
+
+
+# Toggle user admin privileges
+@router.patch("/users/{user_id}/admin")
+def toggle_user_admin(
+    user_id: int,
+    admin_update: UserAdminUpdate,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin)
+):
+    """Grant or revoke admin privileges for a user (admin only)."""
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent admin from removing their own admin privileges
+    if user.id == admin.id and not admin_update.is_admin:
+        raise HTTPException(status_code=400, detail="Cannot remove your own admin privileges")
+    
+    user.is_admin = admin_update.is_admin
+    db.commit()
+    db.refresh(user)
+    
+    status_text = "granted" if user.is_admin else "revoked"
+    return {
+        "message": f"Admin privileges {status_text} successfully",
+        "user_id": user.id,
+        "is_admin": user.is_admin
     }

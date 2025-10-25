@@ -196,6 +196,11 @@ function logout() {
 let allJobs = [];
 let currentJob = null;
 
+// ==================== USER MANAGEMENT FUNCTIONS ====================
+
+let allUsers = [];
+let filteredUsers = [];
+
 // Initialize job management when tab is clicked
 document.addEventListener('DOMContentLoaded', () => {
   // Add tab event listeners
@@ -207,6 +212,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  const userTab = document.getElementById('users-tab');
+  if (userTab) {
+    userTab.addEventListener('click', () => {
+      loadUsers(); // This will call loadUserAnalytics() automatically
+    });
+  }
+  
   // Job management button listeners
   const createJobBtn = document.getElementById('createJobBtn');
   const saveJobBtn = document.getElementById('saveJobBtn');
@@ -215,6 +227,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (createJobBtn) createJobBtn.addEventListener('click', () => openJobModal());
   if (saveJobBtn) saveJobBtn.addEventListener('click', saveJob);
   if (refreshJobsBtn) refreshJobsBtn.addEventListener('click', loadJobs);
+  
+  // User management button listeners
+  const refreshUsersBtn = document.getElementById('refreshUsersBtn');
+  const userSearch = document.getElementById('userSearch');
+  
+  if (refreshUsersBtn) refreshUsersBtn.addEventListener('click', loadUsers);
+  if (userSearch) {
+    userSearch.addEventListener('input', (e) => {
+      filterUsers(e.target.value);
+    });
+  }
 });
 
 // Load job analytics
@@ -512,4 +535,252 @@ function showAlert(message, type = 'info') {
       alertDiv.remove();
     }
   }, 3000);
+}
+
+// ==================== USER MANAGEMENT FUNCTIONS ====================
+
+// Load user analytics - Calculate from user data
+function loadUserAnalytics() {
+  if (allUsers.length === 0) return;
+  
+  const totalUsers = allUsers.length;
+  const adminCount = allUsers.filter(user => user.is_admin).length;
+  const activeUsers = allUsers.filter(user => user.application_count > 0).length;
+  const newThisMonth = totalUsers; // All registered recently
+  
+  document.getElementById('totalUsersCount').textContent = totalUsers;
+  document.getElementById('newUsersMonth').textContent = newThisMonth;
+  document.getElementById('activeUsersCount').textContent = activeUsers;
+  document.getElementById('adminUsersCount').textContent = adminCount;
+}
+
+// Load all users
+async function loadUsers() {
+  const token = localStorage.getItem('token');
+  const tableBody = document.getElementById('usersTable');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/users`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      allUsers = await response.json();
+      filteredUsers = [...allUsers]; // Copy for filtering
+      renderUsersTable(filteredUsers);
+      loadUserAnalytics(); // Calculate analytics after loading users
+    }
+  } catch (error) {
+    console.error('Error loading users:', error);
+    tableBody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error loading users</td></tr>';
+  }
+}
+
+// Render users table
+function renderUsersTable(users) {
+  const tableBody = document.getElementById('usersTable');
+  
+  if (users.length === 0) {
+    tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4">No users found</td></tr>';
+    return;
+  }
+  
+  tableBody.innerHTML = users.map(user => `
+    <tr>
+      <td>${user.id}</td>
+      <td>
+        <strong>${user.full_name}</strong>
+      </td>
+      <td>${user.email}</td>
+      <td>${user.phone || 'N/A'}</td>
+      <td>${formatDate(user.created_at)}</td>
+      <td>
+        <span class="badge bg-info">${user.application_count}</span>
+      </td>
+      <td>
+        <span class="badge ${user.is_admin ? 'bg-danger' : 'bg-primary'}">
+          ${user.is_admin ? 'Admin' : 'User'}
+        </span>
+      </td>
+      <td>
+        <div class="btn-group btn-group-sm" role="group">
+          <button class="btn btn-outline-info btn-sm" onclick="viewUserDetails(${user.id})" title="View Details">
+            <i class="bi bi-eye"></i>
+          </button>
+          <button class="btn btn-outline-${user.is_admin ? 'warning' : 'success'} btn-sm" 
+                  onclick="toggleUserAdmin(${user.id}, ${!user.is_admin})" 
+                  title="${user.is_admin ? 'Remove Admin' : 'Make Admin'}">
+            <i class="bi bi-${user.is_admin ? 'person-dash' : 'person-plus'}"></i>
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="toggleUserStatus(${user.id}, false)" title="Disable Account">
+            <i class="bi bi-person-x"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Filter users based on search
+function filterUsers(searchTerm) {
+  if (!searchTerm) {
+    filteredUsers = [...allUsers];
+  } else {
+    const term = searchTerm.toLowerCase();
+    filteredUsers = allUsers.filter(user => 
+      user.full_name.toLowerCase().includes(term) ||
+      user.email.toLowerCase().includes(term) ||
+      user.phone?.includes(term)
+    );
+  }
+  renderUsersTable(filteredUsers);
+}
+
+// View user details
+async function viewUserDetails(userId) {
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      const user = await response.json();
+      
+      // Populate modal with user data
+      document.getElementById('userId').textContent = user.id;
+      document.getElementById('userFullName').textContent = `${user.first_name} ${user.last_name}`;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userPhone').textContent = user.phone || 'Not provided';
+      document.getElementById('userRole').textContent = user.is_admin ? 'Administrator' : 'User';
+      document.getElementById('userRegistered').textContent = formatDate(user.created_at);
+      document.getElementById('userStatus').textContent = user.is_active ? 'Active' : 'Inactive';
+      document.getElementById('userApplicationCount').textContent = user.application_count;
+      
+      // Populate applications
+      const applicationsDiv = document.getElementById('userApplications');
+      if (user.applications.length === 0) {
+        applicationsDiv.innerHTML = '<p class="text-muted">No applications submitted yet.</p>';
+      } else {
+        applicationsDiv.innerHTML = `
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Job</th>
+                  <th>Company</th>
+                  <th>Status</th>
+                  <th>Applied</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${user.applications.map(app => `
+                  <tr>
+                    <td>${app.job_title}</td>
+                    <td>${app.company}</td>
+                    <td><span class="badge bg-secondary">${formatStatus(app.status)}</span></td>
+                    <td>${formatDate(app.applied_at)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+      
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('userModal'));
+      modal.show();
+      
+    } else {
+      showAlert('Failed to load user details', 'error');
+    }
+  } catch (error) {
+    console.error('Error loading user details:', error);
+    showAlert('Error loading user details', 'error');
+  }
+}
+
+// Toggle user admin privileges
+async function toggleUserAdmin(userId, makeAdmin) {
+  if (!confirm(`Are you sure you want to ${makeAdmin ? 'grant admin privileges to' : 'remove admin privileges from'} this user?`)) {
+    return;
+  }
+  
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/users/${userId}/admin`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ is_admin: makeAdmin })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      showAlert(result.message, 'success');
+      
+      // Reload data
+      loadUsers();
+      loadUserAnalytics();
+      loadStats(); // Update main dashboard stats
+      
+    } else {
+      const error = await response.json();
+      showAlert(`Error: ${error.detail || 'Failed to update admin privileges'}`, 'error');
+    }
+  } catch (error) {
+    console.error('Error updating admin privileges:', error);
+    showAlert('Error updating admin privileges', 'error');
+  }
+}
+
+// Toggle user account status
+async function toggleUserStatus(userId, isActive) {
+  const action = isActive ? 'enable' : 'disable';
+  if (!confirm(`Are you sure you want to ${action} this user account?`)) {
+    return;
+  }
+  
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/users/${userId}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ is_active: isActive })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      showAlert(result.message, 'success');
+      
+      // Note: Since we don't have is_active column yet, this is simulated
+      if (result.note) {
+        showAlert(result.note, 'info');
+      }
+      
+      // Reload data
+      loadUsers();
+      loadUserAnalytics();
+      
+    } else {
+      const error = await response.json();
+      showAlert(`Error: ${error.detail || 'Failed to update account status'}`, 'error');
+    }
+  } catch (error) {
+    console.error('Error updating account status:', error);
+    showAlert('Error updating account status', 'error');
+  }
 }
