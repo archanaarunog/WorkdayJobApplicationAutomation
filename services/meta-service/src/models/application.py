@@ -22,6 +22,7 @@ class Application(Base):
     # Foreign keys - these link to other tables
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     job_id = Column(Integer, ForeignKey("jobs.id"), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True, index=True)  # Derived from job.company_id
     
     # Application content
     cover_letter = Column(Text, nullable=False)  # Required field
@@ -41,6 +42,8 @@ class Application(Base):
     user = relationship("User", back_populates="applications")
     # This allows bidirectional access: application.job and job.applications
     job = relationship("Job", back_populates="applications")
+    # Company relationship for multi-tenancy (derived from job)
+    company = relationship("Company", back_populates="applications")
 
     def __repr__(self):
         return f"<Application(id={self.id}, user_id={self.user_id}, job_id={self.job_id}, status='{self.status}')>"

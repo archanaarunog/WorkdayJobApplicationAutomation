@@ -4,7 +4,7 @@ Job model for Meta Portal.
 This defines the structure of job postings in our database.
 """
 
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text, ForeignKey
 from sqlalchemy.sql import func
 from src.config.database import Base
 
@@ -17,6 +17,9 @@ class Job(Base):
 
     # Primary key
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    
+    # Company association for multi-tenancy
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     
     # Job information
     title = Column(String(200), nullable=False, index=True)  # Indexed for searching
@@ -39,11 +42,15 @@ class Job(Base):
     posted_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
 
-    # Relationship: All applications submitted for this job
+    # Relationships
+    # All applications submitted for this job
     # This allows you to do: job.applications to get a list of Application objects
     # back_populates must match the name used in Application model's relationship to Job
     from sqlalchemy.orm import relationship
     applications = relationship("Application", back_populates="job", cascade="all, delete-orphan")
+    
+    # Company relationship for multi-tenancy
+    company = relationship("Company", back_populates="jobs")
 
     def __repr__(self):
         return f"<Job(id={self.id}, title='{self.title}', location='{self.location}')>"

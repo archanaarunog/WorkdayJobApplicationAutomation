@@ -10,7 +10,8 @@ from src.models.application import Application
 from src.models.user import User
 from src.models.job import Job
 from src.schemas import ApplicationCreate, ApplicationRead
-from src.routes.user import get_current_user
+from src.routes.user import get_current_user, get_user_company_context
+from src.utils.multitenant import filter_by_company, ensure_company_access, auto_set_company_id
 
 router = APIRouter(prefix="/api/applications", tags=["applications"])
 
@@ -18,22 +19,31 @@ router = APIRouter(prefix="/api/applications", tags=["applications"])
 def apply_to_job(
     application: ApplicationCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    company_context: dict = Depends(get_user_company_context)
 ):
     """
     Submit a new job application for the current user.
     Prevents duplicate applications for the same job.
     """
+    # Ensure the job exists and user can apply to it
+    job = ensure_company_access(db, Job, application.job_id, company_context['company_id'], company_context['is_admin'])
+    
     # Check if already applied
     existing = db.query(Application).filter_by(user_id=current_user.id, job_id=application.job_id).first()
     if existing:
         raise HTTPException(status_code=400, detail="Already applied to this job")
+    
     app = Application(
         user_id=current_user.id,
         job_id=application.job_id,
         cover_letter=application.cover_letter,
         additional_info=application.additional_info
     )
+    
+    # Set company_id (inherit from job)
+    auto_set_company_id(db, app, company_context['company_id'], Job, application.job_id)
+    
     db.add(app)
     db.commit()
     db.refresh(app)
@@ -42,13 +52,16 @@ def apply_to_job(
 @router.get("/me")
 def get_my_applications(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    company_context: dict = Depends(get_user_company_context)
 ):
     """
     Get all job applications submitted by the current user with job details.
     Returns applications with embedded job information for dashboard display.
     """
-    applications = db.query(Application).filter_by(user_id=current_user.id).all()
+    # Filter applications by user and company
+    app_query = filter_by_company(db.query(Application), Application, company_context['company_id'], company_context['is_admin'])
+    applications = app_query.filter_by(user_id=current_user.id).all()
     
     # Enrich applications with job details
     result = []

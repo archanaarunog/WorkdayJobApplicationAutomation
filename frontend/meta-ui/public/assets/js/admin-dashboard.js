@@ -3,6 +3,18 @@ const API_BASE = 'http://localhost:8000';
 let currentFilter = 'all';
 let allApplications = [];
 
+// Utility function to escape HTML
+function escapeHtml(unsafe) {
+  if (!unsafe) return '';
+  return unsafe
+    .toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 // Check authentication and admin role
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
@@ -101,7 +113,7 @@ function renderApplicationsTable(applications) {
       </td>
       <td>
         <strong>${app.job.title}</strong><br>
-        <small class="text-muted">${app.job.company}</small>
+        <small class="text-muted">${app.job.company && app.job.company.name ? app.job.company.name : 'N/A'}</small>
       </td>
       <td>${app.job.department || 'N/A'}</td>
       <td>${formatDate(app.applied_at)}</td>
@@ -306,7 +318,7 @@ function renderJobsTable(jobs) {
         <strong>${job.title}</strong>
         <br><small class="text-muted">${job.job_type}</small>
       </td>
-      <td>${job.company}</td>
+      <td>${job.company && job.company.name ? job.company.name : 'N/A'}</td>
       <td>
         ${job.location}
         <br><small class="text-muted">${job.remote_options}</small>
@@ -357,7 +369,7 @@ function openJobModal(job = null) {
     modalTitle.textContent = 'Edit Job';
     document.getElementById('jobId').value = job.id;
     document.getElementById('jobTitle').value = job.title;
-    document.getElementById('jobCompany').value = job.company;
+    document.getElementById('jobCompany').value = job.company && job.company.name ? job.company.name : '';
     document.getElementById('jobDepartment').value = job.department || '';
     document.getElementById('jobLocation').value = job.location;
     document.getElementById('jobDescription').value = job.description;
@@ -682,7 +694,7 @@ async function viewUserDetails(userId) {
                 ${user.applications.map(app => `
                   <tr>
                     <td>${app.job_title}</td>
-                    <td>${app.company}</td>
+                    <td>${app.company && app.company.name ? app.company.name : 'N/A'}</td>
                     <td><span class="badge bg-secondary">${formatStatus(app.status)}</span></td>
                     <td>${formatDate(app.applied_at)}</td>
                   </tr>
@@ -784,3 +796,549 @@ async function toggleUserStatus(userId, isActive) {
     showAlert('Error updating account status', 'error');
   }
 }
+
+// ==================== COMPANY MANAGEMENT FUNCTIONS ====================
+
+let allCompanies = [];
+let currentCompanyId = null;
+
+// Load company management data
+async function loadCompanies() {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    console.error('No token found');
+    window.location.href = 'login.html';
+    return;
+  }
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/companies`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      allCompanies = await response.json();
+      console.log('Companies loaded:', allCompanies);
+      displayCompanies();
+      updateCompanyStatistics();
+    } else if (response.status === 401) {
+      console.error('Unauthorized - redirecting to login');
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    } else {
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
+      console.error('Error response:', error);
+      showAlert(`Error loading companies: ${error.detail}`, 'error');
+    }
+  } catch (error) {
+    console.error('Network error loading companies:', error);
+    showAlert('Network error loading companies. Please check if the server is running.', 'error');
+  }
+}
+
+// Display companies in table
+function displayCompanies() {
+  const tbody = document.getElementById('companiesTableBody');
+  
+  if (allCompanies.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="text-center">No companies found</td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = allCompanies.map(company => `
+    <tr>
+      <td>
+        <div class="d-flex align-items-center">
+          <div>
+            <strong>${escapeHtml(company.name)}</strong>
+            <div class="text-muted small">${escapeHtml(company.slug)}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        ${company.domain ? `<a href="https://${escapeHtml(company.domain)}" target="_blank">${escapeHtml(company.domain)}</a>` : '-'}
+      </td>
+      <td>${escapeHtml(company.industry || '-')}</td>
+      <td>
+        ${company.admin_user ? `
+          <div>
+            <strong>${escapeHtml(company.admin_user.name)}</strong>
+            <div class="text-muted small">${escapeHtml(company.admin_user.email)}</div>
+          </div>
+        ` : '<span class="text-muted">No admin assigned</span>'}
+      </td>
+      <td>
+        <span class="badge bg-info">${company.statistics.user_count}</span>
+      </td>
+      <td>
+        <span class="badge bg-success">${company.statistics.active_job_count}</span>
+        <span class="text-muted">/${company.statistics.job_count}</span>
+      </td>
+      <td>
+        <span class="badge ${company.is_active ? 'bg-success' : 'bg-secondary'}">
+          ${company.is_active ? 'Active' : 'Inactive'}
+        </span>
+      </td>
+      <td>${formatDate(company.created_at)}</td>
+      <td>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            Actions
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#" onclick="viewCompanyDetails(${company.id})">
+              <i class="bi bi-eye me-1"></i>View Details
+            </a></li>
+            <li><a class="dropdown-item" href="#" onclick="editCompany(${company.id})">
+              <i class="bi bi-pencil me-1"></i>Edit
+            </a></li>
+            <li><a class="dropdown-item" href="#" onclick="toggleCompanyStatus(${company.id}, ${!company.is_active})">
+              <i class="bi bi-power me-1"></i>${company.is_active ? 'Deactivate' : 'Activate'}
+            </a></li>
+            ${company.slug !== 'default' ? `
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="deleteCompany(${company.id})">
+              <i class="bi bi-trash me-1"></i>Delete
+            </a></li>
+            ` : ''}
+          </ul>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Update company statistics cards
+function updateCompanyStatistics() {
+  const totalCompanies = allCompanies.length;
+  const activeCompanies = allCompanies.filter(c => c.is_active).length;
+  const companiesWithJobs = allCompanies.filter(c => c.statistics.job_count > 0).length;
+  const averageUsers = totalCompanies > 0 ? Math.round(
+    allCompanies.reduce((sum, c) => sum + c.statistics.user_count, 0) / totalCompanies
+  ) : 0;
+  
+  document.getElementById('totalCompanies').textContent = totalCompanies;
+  document.getElementById('activeCompanies').textContent = activeCompanies;
+  document.getElementById('companiesWithJobs').textContent = companiesWithJobs;
+  document.getElementById('averageCompanyUsers').textContent = averageUsers;
+}
+
+// Open company modal for creating new company
+async function openCompanyModal() {
+  currentCompanyId = null;
+  document.getElementById('companyModalLabel').textContent = 'Add New Company';
+  document.getElementById('saveCompanyBtn').innerHTML = '<i class="bi bi-building-check me-1"></i>Save Company';
+  
+  // Reset form
+  document.getElementById('companyForm').reset();
+  
+  // Load admin users for dropdown
+  await loadAdminUsers();
+}
+
+// Load admin users for company admin dropdown
+async function loadAdminUsers() {
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/users`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      const users = await response.json();
+      const adminUsers = users.filter(user => user.is_admin);
+      
+      const select = document.getElementById('companyAdminUser');
+      select.innerHTML = '<option value="">Select Admin User</option>' + 
+        adminUsers.map(user => 
+          `<option value="${user.id}">${escapeHtml(user.full_name)} (${escapeHtml(user.email)})</option>`
+        ).join('');
+    }
+  } catch (error) {
+    console.error('Error loading admin users:', error);
+  }
+}
+
+// Auto-generate slug from company name
+document.addEventListener('DOMContentLoaded', () => {
+  const companyNameInput = document.getElementById('companyName');
+  const companySlugInput = document.getElementById('companySlug');
+  
+  if (companyNameInput && companySlugInput) {
+    companyNameInput.addEventListener('input', (e) => {
+      if (!currentCompanyId) { // Only auto-generate for new companies
+        const slug = e.target.value
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        companySlugInput.value = slug;
+      }
+    });
+  }
+});
+
+// Save company (create or update)
+document.addEventListener('DOMContentLoaded', () => {
+  const saveBtn = document.getElementById('saveCompanyBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', saveCompany);
+  }
+});
+
+async function saveCompany() {
+  const formData = {
+    name: document.getElementById('companyName').value.trim(),
+    slug: document.getElementById('companySlug').value.trim(),
+    domain: document.getElementById('companyDomain').value.trim() || null,
+    industry: document.getElementById('companyIndustry').value || null,
+    website: document.getElementById('companyWebsite').value.trim() || null,
+    headquarters: document.getElementById('companyHeadquarters').value.trim() || null,
+    size: document.getElementById('companySize').value || null,
+    description: document.getElementById('companyDescription').value.trim() || null,
+    admin_user_id: parseInt(document.getElementById('companyAdminUser').value) || null
+  };
+  
+  // Validation
+  if (!formData.name || !formData.slug) {
+    showAlert('Company name and slug are required', 'error');
+    return;
+  }
+  
+  const token = localStorage.getItem('token');
+  const url = currentCompanyId ? 
+    `${API_BASE}/api/admin/companies/${currentCompanyId}` : 
+    `${API_BASE}/api/admin/companies`;
+  const method = currentCompanyId ? 'PATCH' : 'POST';
+  
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      showAlert(result.message, 'success');
+      
+      // Close modal and reload data
+      const modal = bootstrap.Modal.getInstance(document.getElementById('companyModal'));
+      modal.hide();
+      
+      loadCompanies();
+      
+    } else {
+      const error = await response.json();
+      showAlert(`Error: ${error.detail || 'Failed to save company'}`, 'error');
+    }
+  } catch (error) {
+    console.error('Error saving company:', error);
+    showAlert('Error saving company', 'error');
+  }
+}
+
+// View company details
+async function viewCompanyDetails(companyId) {
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/companies/${companyId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      const company = await response.json();
+      currentCompanyId = companyId;
+      
+      // Populate company information
+      document.getElementById('detailCompanyName').textContent = company.name;
+      document.getElementById('detailCompanyDomain').textContent = company.domain || 'N/A';
+      document.getElementById('detailCompanyIndustry').textContent = company.industry || 'N/A';
+      document.getElementById('detailCompanyHeadquarters').textContent = company.headquarters || 'N/A';
+      document.getElementById('detailCompanySize').textContent = company.size || 'N/A';
+      document.getElementById('detailCompanyDescription').textContent = company.description || 'No description available.';
+      
+      // Website link
+      const websiteLink = document.getElementById('detailCompanyWebsite');
+      if (company.website) {
+        websiteLink.href = company.website;
+        websiteLink.textContent = company.website;
+        websiteLink.style.display = 'inline';
+      } else {
+        websiteLink.style.display = 'none';
+        websiteLink.parentNode.innerHTML = '<strong>Website:</strong> N/A';
+      }
+      
+      // Statistics
+      document.getElementById('detailCompanyUsers').textContent = company.statistics.total_users;
+      document.getElementById('detailCompanyJobs').textContent = `${company.statistics.active_jobs}/${company.statistics.total_jobs}`;
+      document.getElementById('detailCompanyApplications').textContent = company.statistics.total_applications;
+      document.getElementById('detailCompanyStatus').innerHTML = 
+        `<span class="badge ${company.is_active ? 'bg-success' : 'bg-secondary'}">${company.is_active ? 'Active' : 'Inactive'}</span>`;
+      document.getElementById('detailCompanyCreated').textContent = formatDate(company.created_at);
+      
+      // Admin info
+      if (company.admin_user) {
+        document.getElementById('detailCompanyAdmin').innerHTML = 
+          `${escapeHtml(company.admin_user.name)}<br><small class="text-muted">${escapeHtml(company.admin_user.email)}</small>`;
+      } else {
+        document.getElementById('detailCompanyAdmin').textContent = 'No admin assigned';
+      }
+      
+      // Recent activity
+      displayRecentActivity(company.recent_activity);
+      
+      // Show modal
+      const modal = new bootstrap.Modal(document.getElementById('companyDetailsModal'));
+      modal.show();
+      
+    } else {
+      const error = await response.json();
+      showAlert(`Error loading company details: ${error.detail}`, 'error');
+    }
+  } catch (error) {
+    console.error('Error loading company details:', error);
+    showAlert('Error loading company details', 'error');
+  }
+}
+
+// Display recent activity in company details modal
+function displayRecentActivity(activity) {
+  // Recent users
+  const usersContainer = document.getElementById('detailRecentUsers');
+  if (activity.recent_users && activity.recent_users.length > 0) {
+    usersContainer.innerHTML = activity.recent_users.map(user => `
+      <div class="border-bottom py-1">
+        <small><strong>${escapeHtml(user.name)}</strong><br>
+        <span class="text-muted">${formatDate(user.created_at)}</span></small>
+      </div>
+    `).join('');
+  } else {
+    usersContainer.innerHTML = '<small class="text-muted">No recent users</small>';
+  }
+  
+  // Recent jobs
+  const jobsContainer = document.getElementById('detailRecentJobs');
+  if (activity.recent_jobs && activity.recent_jobs.length > 0) {
+    jobsContainer.innerHTML = activity.recent_jobs.map(job => `
+      <div class="border-bottom py-1">
+        <small><strong>${escapeHtml(job.title)}</strong><br>
+        <span class="text-muted">${escapeHtml(job.location)} - ${formatDate(job.posted_date)}</span></small>
+      </div>
+    `).join('');
+  } else {
+    jobsContainer.innerHTML = '<small class="text-muted">No recent jobs</small>';
+  }
+  
+  // Recent applications
+  const appsContainer = document.getElementById('detailRecentApplications');
+  if (activity.recent_applications && activity.recent_applications.length > 0) {
+    appsContainer.innerHTML = activity.recent_applications.map(app => `
+      <div class="border-bottom py-1">
+        <small><strong>${escapeHtml(app.user_name)}</strong><br>
+        <span class="text-muted">${escapeHtml(app.job_title)} - ${formatDate(app.applied_at)}</span></small>
+      </div>
+    `).join('');
+  } else {
+    appsContainer.innerHTML = '<small class="text-muted">No recent applications</small>';
+  }
+}
+
+// Edit company
+async function editCompany(companyId) {
+  const company = allCompanies.find(c => c.id === companyId);
+  if (!company) return;
+  
+  currentCompanyId = companyId;
+  document.getElementById('companyModalLabel').textContent = 'Edit Company';
+  document.getElementById('saveCompanyBtn').innerHTML = '<i class="bi bi-building-check me-1"></i>Update Company';
+  
+  // Populate form
+  document.getElementById('companyName').value = company.name;
+  document.getElementById('companySlug').value = company.slug;
+  document.getElementById('companyDomain').value = company.domain || '';
+  document.getElementById('companyIndustry').value = company.industry || '';
+  document.getElementById('companyWebsite').value = company.website || '';
+  document.getElementById('companyHeadquarters').value = company.headquarters || '';
+  document.getElementById('companySize').value = company.size || '';
+  document.getElementById('companyDescription').value = company.description || '';
+  
+  // Load admin users and set current admin
+  await loadAdminUsers();
+  if (company.admin_user) {
+    document.getElementById('companyAdminUser').value = company.admin_user.id;
+  }
+  
+  // Show modal
+  const modal = new bootstrap.Modal(document.getElementById('companyModal'));
+  modal.show();
+}
+
+// Toggle company status
+async function toggleCompanyStatus(companyId, newStatus) {
+  const company = allCompanies.find(c => c.id === companyId);
+  const action = newStatus ? 'activate' : 'deactivate';
+  
+  if (!confirm(`Are you sure you want to ${action} "${company.name}"?`)) {
+    return;
+  }
+  
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/companies/${companyId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ is_active: newStatus })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      showAlert(result.message, 'success');
+      loadCompanies();
+    } else {
+      const error = await response.json();
+      showAlert(`Error: ${error.detail || `Failed to ${action} company`}`, 'error');
+    }
+  } catch (error) {
+    console.error(`Error ${action}ing company:`, error);
+    showAlert(`Error ${action}ing company`, 'error');
+  }
+}
+
+// Delete company
+async function deleteCompany(companyId) {
+  const company = allCompanies.find(c => c.id === companyId);
+  
+  if (company.slug === 'default') {
+    showAlert('Cannot delete the default company', 'error');
+    return;
+  }
+  
+  const confirmation = prompt(
+    `WARNING: This will permanently delete "${company.name}" and ALL associated data (users, jobs, applications).\n\n` +
+    `Type the company name "${company.name}" to confirm deletion:`
+  );
+  
+  if (confirmation !== company.name) {
+    if (confirmation !== null) {
+      showAlert('Company name did not match. Deletion cancelled.', 'error');
+    }
+    return;
+  }
+  
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`${API_BASE}/api/admin/companies/${companyId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      showAlert(`${result.message}\nDeleted: ${result.deleted_data.users} users, ${result.deleted_data.jobs} jobs, ${result.deleted_data.applications} applications`, 'success');
+      loadCompanies();
+    } else {
+      const error = await response.json();
+      showAlert(`Error: ${error.detail || 'Failed to delete company'}`, 'error');
+    }
+  } catch (error) {
+    console.error('Error deleting company:', error);
+    showAlert('Error deleting company', 'error');
+  }
+}
+
+// Filter companies by status
+function filterCompanies() {
+  const filter = document.getElementById('companyStatusFilter').value;
+  let filteredCompanies = allCompanies;
+  
+  if (filter === 'active') {
+    filteredCompanies = allCompanies.filter(c => c.is_active);
+  } else if (filter === 'inactive') {
+    filteredCompanies = allCompanies.filter(c => !c.is_active);
+  }
+  
+  const searchTerm = document.getElementById('companySearch').value.toLowerCase();
+  if (searchTerm) {
+    filteredCompanies = filteredCompanies.filter(c => 
+      c.name.toLowerCase().includes(searchTerm) ||
+      (c.domain && c.domain.toLowerCase().includes(searchTerm)) ||
+      (c.industry && c.industry.toLowerCase().includes(searchTerm))
+    );
+  }
+  
+  displayFilteredCompanies(filteredCompanies);
+}
+
+// Search companies
+function searchCompanies() {
+  filterCompanies(); // Reuse the same filtering logic
+}
+
+// Display filtered companies
+function displayFilteredCompanies(companies) {
+  const tbody = document.getElementById('companiesTableBody');
+  
+  if (companies.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="text-center">No companies match the current filter</td>
+      </tr>
+    `;
+    return;
+  }
+  
+  // Use the same display logic but with filtered companies
+  const originalCompanies = allCompanies;
+  allCompanies = companies;
+  displayCompanies();
+  allCompanies = originalCompanies;
+}
+
+// Load companies when Companies tab is activated
+document.addEventListener('DOMContentLoaded', () => {
+  // Add event listener for tab changes
+  const companiesTab = document.getElementById('companies-tab');
+  if (companiesTab) {
+    companiesTab.addEventListener('shown.bs.tab', () => {
+      console.log('Companies tab activated');
+      loadCompanies();
+    });
+    
+    // Also add click event as backup
+    companiesTab.addEventListener('click', () => {
+      console.log('Companies tab clicked');
+      setTimeout(() => {
+        loadCompanies();
+      }, 200);
+    });
+  }
+  
+  // Add manual debug function to window
+  window.debugLoadCompanies = loadCompanies;
+  console.log('Debug: window.debugLoadCompanies() available for testing');
+});

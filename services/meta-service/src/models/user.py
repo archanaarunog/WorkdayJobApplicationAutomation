@@ -5,7 +5,7 @@ This file defines what a User looks like in our database.
 Think of it as a blueprint for a user table.
 """
 
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.sql import func
 from src.config.database import Base
 
@@ -18,6 +18,9 @@ class User(Base):
 
     # Primary key - unique identifier for each user
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    
+    # Company association for multi-tenancy
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     
     # User information - all required fields
     email = Column(String(255), unique=True, index=True, nullable=False)
@@ -42,11 +45,14 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     is_admin = Column(Boolean, default=False, nullable=False)  # Admin role flag
 
-    # Relationship: All job applications submitted by this user
+    # Relationships
     # This allows you to do: user.applications to get a list of Application objects
     # back_populates must match the name used in Application model's relationship to User
     from sqlalchemy.orm import relationship
     applications = relationship("Application", back_populates="user", cascade="all, delete-orphan")
+    
+    # Company relationship for multi-tenancy
+    company = relationship("Company", back_populates="users", foreign_keys=[company_id])
 
     # __repr__ is a special method that defines how this object appears when you print it or inspect it in the Python shell.
     # It is not called automatically every time; it is used when you do print(user), repr(user), or see the object in debugging tools.
