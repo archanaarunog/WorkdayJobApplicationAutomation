@@ -80,8 +80,7 @@ Handles user registration and login endpoints.
 # starting with /api and user tag name
 router = APIRouter(prefix="/api/users", tags=["User"])
 
-[]
-@router.post("/register", response_model=schemas.UserRead)
+@router.post("/register", response_model=schemas.UserRead, status_code=201)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Check if user already exists
     existing_user = db.query(models.user.User).filter(models.user.User.email == user.email).first()

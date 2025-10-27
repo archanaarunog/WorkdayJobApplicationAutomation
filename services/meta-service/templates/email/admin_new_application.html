@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}New Job Application - {{ job_title }}{% endblock %}
+
+{% block content %}
+<h2>🔔 New Job Application Received</h2>
+
+<p>Dear Hiring Manager,</p>
+
+<p>
+    A new application has been submitted for the <strong>{{ job_title }}</strong> position. 
+    Please review the details below.
+</p>
+
+<div class="info-box">
+    <h3>Application Summary:</h3>
+    <p><strong>Position:</strong> {{ job_title }}</p>
+    <p><strong>Department:</strong> {{ job_department }}</p>
+    <p><strong>Location:</strong> {{ job_location }}</p>
+    <p><strong>Application Date:</strong> {{ application_date }}</p>
+    <p><strong>Application ID:</strong> #{{ application_id }}</p>
+</div>
+
+<h3>Candidate Information:</h3>
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px;">
+    <p><strong>Name:</strong> {{ candidate_name }}</p>
+    <p><strong>Email:</strong> {{ candidate_email }}</p>
+    <p><strong>Phone:</strong> {{ candidate_phone }}</p>
+    {% if candidate_experience %}
+    <p><strong>Experience:</strong> {{ candidate_experience }}</p>
+    {% endif %}
+    {% if candidate_skills %}
+    <p><strong>Key Skills:</strong> {{ candidate_skills }}</p>
+    {% endif %}
+</div>
+
+<h3>Cover Letter Preview:</h3>
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; font-style: italic; border-left: 4px solid #9B8ACB;">
+    {{ cover_letter[:300] }}{% if cover_letter|length > 300 %}...{% endif %}
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{ admin_application_url }}" class="button">Review Full Application</a>
+</div>
+
+{% if total_applications_today %}
+<div class="divider"></div>
+<p style="text-align: center; color: #666;">
+    <small>You have received {{ total_applications_today }} application(s) today for all positions.</small>
+</p>
+{% endif %}
+
+<p>
+    You can review the complete application, resume, and take action from your admin dashboard.
+</p>
+
+<p>
+    Best regards,<br>
+    <strong>Meta Portal System</strong>
+</p>
+{% endblock %}

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Management - Meta Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #7C5BA6;
+            --primary-light: #E8DFF5;
+            --secondary-color: #8B6BA8;
+            --success-color: #5BA85C;
+            --error-color: #D9534F;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #E0E0E0;
+        }
+
+        body {
+            background-color: #F5F3F8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .main-container {
+            padding: 30px 0;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Drag and Drop Area */
+        .drag-drop-zone {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: var(--primary-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .drag-drop-zone:hover {
+            background-color: #F0E8F8;
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .drag-drop-zone.dragover {
+            background-color: #E8D5FF;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 20px rgba(124, 91, 166, 0.2);
+        }
+
+        .drag-drop-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .drag-drop-text {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .drag-drop-subtext {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .hidden-file-input {
+            display: none;
+        }
+
+        /* Progress Bar */
+        .upload-progress {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .upload-progress.active {
+            display: block;
+        }
+
+        .progress {
+            height: 25px;
+            background-color: #E0E0E0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Resume Display */
+        .resume-display {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .resume-display.active {
+            display: block;
+        }
+
+        .resume-header {
+            background-color: var(--primary-light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resume-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .resume-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .resume-details h5 {
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .resume-details small {
+            color: var(--text-light);
+            display: block;
+            margin-top: 5px;
+        }
+
+        .resume-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Parsed Data Display */
+        .parsed-section {
+            background-color: #F9F7FC;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .parsed-section h6 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .parsed-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .parsed-item:last-child {
+            border-bottom: none;
+        }
+
+        .parsed-label {
+            font-weight: 500;
+            color: var(--primary-color);
+            min-width: 150px;
+        }
+
+        .parsed-value {
+            color: var(--text-dark);
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .skill-tag .remove-skill {
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .skill-tag .remove-skill:hover {
+            opacity: 1;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-badge.success {
+            background-color: #D4EDDA;
+            color: #155724;
+        }
+
+        .status-badge.warning {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+
+        .status-badge.error {
+            background-color: #F8D7DA;
+            color: #721C24;
+        }
+
+        /* Loading and Empty States */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            color: var(--primary-light);
+            margin-bottom: 15px;
+        }
+
+        .empty-state h5 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background-color: #D4EDDA;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #F8D7DA;
+            color: #721C24;
+        }
+
+        .alert-warning {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #D1ECF1;
+            color: #0C5460;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .drag-drop-zone {
+                padding: 30px 15px;
+                min-height: 150px;
+            }
+
+            .drag-drop-icon {
+                font-size: 2rem;
+            }
+
+            .resume-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .resume-actions {
+                width: 100%;
+            }
+
+            .resume-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-lg">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="bi bi-file-earmark-pdf"></i> Resume Management
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="container-lg">
+            <!-- Alert Messages -->
+            <div id="alertContainer"></div>
+
+            <!-- Upload Section -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-cloud-arrow-up"></i> Upload Your Resume
+                    </h5>
+                    
+                    <div class="drag-drop-zone" id="dragDropZone">
+                        <i class="bi bi-cloud-upload drag-drop-icon"></i>
+                        <div class="drag-drop-text">Drag your resume here</div>
+                        <div class="drag-drop-subtext">or click to browse files</div>
+                        <small class="text-muted d-block mt-2">
+                            Supported formats: PDF, DOC, DOCX • Max size: 5MB
+                        </small>
+                    </div>
+
+                    <input type="file" id="fileInput" class="hidden-file-input" accept=".pdf,.doc,.docx">
+
+                    <!-- Upload Progress -->
+                    <div class="upload-progress" id="uploadProgress">
+                        <div class="progress">
+                            <div class="progress-bar" id="progressBar" style="width: 0%">
+                                <span id="progressText">0%</span>
+                            </div>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-hourglass-split"></i> Uploading... <span id="uploadStatus"></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resume Display Section -->
+            <div class="resume-display" id="resumeDisplay">
+                <!-- Resume Header -->
+                <div class="resume-header">
+                    <div class="resume-info">
+                        <i class="bi bi-file-earmark-pdf resume-icon"></i>
+                        <div class="resume-details">
+                            <h5 id="resumeFileName">Resume</h5>
+                            <small id="resumeUploadDate">Uploaded on</small>
+                        </div>
+                    </div>
+                    <div class="resume-actions">
+                        <button class="btn btn-sm btn-outline-primary" id="previewBtn" onclick="previewResume()">
+                            <i class="bi bi-eye"></i> Preview
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" id="downloadBtn" onclick="downloadResume()">
+                            <i class="bi bi-download"></i> Download
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" id="deleteBtn" onclick="deleteResume()">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Parsed Resume Data -->
+                <div class="loading-spinner" id="parsingSpinner">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Parsing...</span>
+                    </div>
+                    <p class="mt-2">Analyzing your resume...</p>
+                </div>
+
+                <div id="parsedDataContainer" style="display: none;">
+                    <!-- Personal Info -->
+                    <div class="parsed-section">
+                        <h6><i class="bi bi-person"></i> Personal Information</h6>
+                        <div class="parsed-item">
+                            <span class="parsed-label">Name</span>
+                            <span class="parsed-value" id="parsedName">-</span>
+                        </div>
+                        <div class="parsed-item">
+                            <span class="parsed-label">Email</span>
+                            <span class="parsed-value" id="parsedEmail">-</span>
+                        </div>
+                        <div class="parsed-item">
+                            <span class="parsed-label">Phone</span>
+                            <span class="parsed-value" id="parsedPhone">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="parsed-section">
+                        <h6><i class="bi bi-lightning-fill"></i> Skills (Extracted)</h6>
+                        <div class="skills-container" id="skillsContainer">
+                            <!-- Skills will be populated here -->
+                        </div>
+                        <div class="mt-3">
+                            <input type="text" class="form-control form-control-sm" id="skillInput" placeholder="Add more skills (press Enter)">
+                        </div>
+                    </div>
+
+                    <!-- Work Experience -->
+                    <div class="parsed-section">
+                        <h6><i class="bi bi-briefcase"></i> Work Experience</h6>
+                        <div id="workExperienceContainer">
+                            <!-- Work experience will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="parsed-section">
+                        <h6><i class="bi bi-mortarboard"></i> Education</h6>
+                        <div id="educationContainer">
+                            <!-- Education will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Parsing Confidence -->
+                    <div class="parsed-section">
+                        <h6><i class="bi bi-percent"></i> Parsing Quality</h6>
+                        <div class="parsed-item">
+                            <span class="parsed-label">Confidence Score</span>
+                            <span class="parsed-value">
+                                <span id="confidenceScore">--</span>%
+                            </span>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle"></i> Review and edit any incorrect information before saving.
+                        </small>
+                    </div>
+
+                    <!-- Save Changes -->
+                    <div class="mt-4">
+                        <button class="btn btn-primary" id="saveParsedBtn" onclick="saveParsedData()">
+                            <i class="bi bi-check-circle"></i> Save Resume Data
+                        </button>
+                        <button class="btn btn-outline-secondary" id="uploadNewBtn" onclick="uploadNew()">
+                            <i class="bi bi-cloud-arrow-up"></i> Upload Different Resume
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <i class="bi bi-inbox"></i>
+                <h5>No Resume Uploaded</h5>
+                <p>Start by uploading your resume to get started.</p>
+                <p class="small text-muted">Once uploaded, we'll automatically extract your information to make job applications faster.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configuration
+        const API_BASE = 'http://localhost:8000/api';
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+        const ACCEPTED_FORMATS = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        
+        let currentFileId = null;
+        let currentSkills = [];
+
+        // ==================== Utility Functions ====================
+
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        function getUserData() {
+            return JSON.parse(localStorage.getItem('userData') || '{}');
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.insertAdjacentHTML('beforeend', alertHtml);
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // ==================== Drag and Drop ====================
+
+        const dragDropZone = document.getElementById('dragDropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dragDropZone.addEventListener('click', () => fileInput.click());
+
+        dragDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragDropZone.classList.add('dragover');
+        });
+
+        dragDropZone.addEventListener('dragleave', () => {
+            dragDropZone.classList.remove('dragover');
+        });
+
+        dragDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragDropZone.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        // ==================== File Handling ====================
+
+        async function handleFileSelect(file) {
+            // Validation
+            if (!ACCEPTED_FORMATS.includes(file.type)) {
+                showAlert('Invalid file format. Please upload a PDF or Word document.', 'danger');
+                return;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                showAlert(`File is too large. Maximum size is ${formatFileSize(MAX_FILE_SIZE)}.`, 'danger');
+                return;
+            }
+
+            // Upload
+            await uploadResume(file);
+        }
+
+        async function uploadResume(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Show progress
+            document.getElementById('uploadProgress').classList.add('active');
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressText').textContent = '0%';
+
+            try {
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        document.getElementById('progressBar').style.width = percentComplete + '%';
+                        document.getElementById('progressText').textContent = Math.round(percentComplete) + '%';
+                    }
+                });
+
+                xhr.addEventListener('load', async () => {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        currentFileId = response.id;
+                        
+                        showAlert('Resume uploaded successfully! Analyzing...', 'success');
+                        
+                        // Parse resume
+                        await parseResume();
+                        
+                        // Display results
+                        displayResumeDisplay();
+                    } else {
+                        showAlert('Upload failed. Please try again.', 'danger');
+                    }
+                });
+
+                xhr.addEventListener('error', () => {
+                    showAlert('Upload error. Please try again.', 'danger');
+                });
+
+                xhr.open('POST', `${API_BASE}/files/upload`);
+                xhr.setRequestHeader('Authorization', `Bearer ${getAuthToken()}`);
+                xhr.send(formData);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Failed to upload resume', 'danger');
+            }
+        }
+
+        async function parseResume() {
+            try {
+                document.getElementById('parsingSpinner').classList.add('active');
+                
+                const response = await fetch(`${API_BASE}/resumes/parse`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ file_id: currentFileId })
+                });
+
+                if (!response.ok) throw new Error('Failed to parse resume');
+
+                const parsedData = await response.json();
+                displayParsedData(parsedData);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Failed to parse resume. Please review the data manually.', 'warning');
+            } finally {
+                document.getElementById('parsingSpinner').classList.remove('active');
+            }
+        }
+
+        function displayParsedData(data) {
+            // Personal Info
+            document.getElementById('parsedName').textContent = data.name || '-';
+            document.getElementById('parsedEmail').textContent = data.email || '-';
+            document.getElementById('parsedPhone').textContent = data.phone || '-';
+
+            // Skills
+            currentSkills = data.skills || [];
+            displaySkills();
+
+            // Work Experience
+            displayWorkExperience(data.work_experience || []);
+
+            // Education
+            displayEducation(data.education || []);
+
+            // Confidence
+            document.getElementById('confidenceScore').textContent = Math.round((data.confidence_score || 0) * 100);
+
+            // Show parsed data
+            document.getElementById('parsedDataContainer').style.display = 'block';
+        }
+
+        function displaySkills() {
+            const skillsContainer = document.getElementById('skillsContainer');
+            skillsContainer.innerHTML = currentSkills.map((skill, index) => `
+                <span class="skill-tag">
+                    ${skill}
+                    <i class="bi bi-x-circle remove-skill" onclick="removeSkill(${index})"></i>
+                </span>
+            `).join('');
+        }
+
+        function removeSkill(index) {
+            currentSkills.splice(index, 1);
+            displaySkills();
+        }
+
+        document.getElementById('skillInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const skill = e.target.value.trim();
+                if (skill && !currentSkills.includes(skill)) {
+                    currentSkills.push(skill);
+                    displaySkills();
+                    e.target.value = '';
+                }
+            }
+        });
+
+        function displayWorkExperience(experiences) {
+            const container = document.getElementById('workExperienceContainer');
+            
+            if (!experiences || experiences.length === 0) {
+                container.innerHTML = '<p class="text-muted">No work experience found</p>';
+                return;
+            }
+
+            container.innerHTML = experiences.map(exp => `
+                <div class="parsed-item">
+                    <div>
+                        <strong>${exp.title || 'Job Title'}</strong><br>
+                        <small>${exp.company || 'Company'}</small><br>
+                        <span class="text-muted">${exp.start_date || ''} - ${exp.end_date || 'Present'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayEducation(educations) {
+            const container = document.getElementById('educationContainer');
+            
+            if (!educations || educations.length === 0) {
+                container.innerHTML = '<p class="text-muted">No education found</p>';
+                return;
+            }
+
+            container.innerHTML = educations.map(edu => `
+                <div class="parsed-item">
+                    <div>
+                        <strong>${edu.degree || 'Degree'}</strong><br>
+                        <small>${edu.school || 'School/University'}</small><br>
+                        <span class="text-muted">${edu.graduation_date || ''}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayResumeDisplay() {
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('resumeDisplay').classList.add('active');
+            
+            // Get file details
+            document.getElementById('resumeFileName').textContent = 'Your Resume';
+            document.getElementById('resumeUploadDate').textContent = `Uploaded on ${formatDate(new Date())}`;
+        }
+
+        // ==================== Resume Actions ====================
+
+        function previewResume() {
+            if (!currentFileId) return;
+            window.open(`${API_BASE}/files/download/${currentFileId}`, '_blank');
+        }
+
+        function downloadResume() {
+            if (!currentFileId) return;
+            const link = document.createElement('a');
+            link.href = `${API_BASE}/files/download/${currentFileId}`;
+            link.download = 'resume';
+            link.click();
+        }
+
+        async function deleteResume() {
+            if (!confirm('Are you sure you want to delete this resume?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/files/${currentFileId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to delete resume');
+
+                showAlert('Resume deleted successfully', 'success');
+                currentFileId = null;
+                uploadNew();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Failed to delete resume', 'danger');
+            }
+        }
+
+        function saveParsedData() {
+            showAlert('Resume data saved successfully!', 'success');
+            // This would typically make an API call to save the parsed data
+        }
+
+        function uploadNew() {
+            currentFileId = null;
+            document.getElementById('resumeDisplay').classList.remove('active');
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('uploadProgress').classList.remove('active');
+            fileInput.value = '';
+        }
+
+        // ==================== Initialization ====================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const userData = getUserData();
+            if (!userData || !userData.id) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Try to load existing resume
+            loadExistingResume();
+        });
+
+        async function loadExistingResume() {
+            try {
+                const response = await fetch(`${API_BASE}/resumes/my-resume`, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+
+                if (response.ok) {
+                    const resume = await response.json();
+                    currentFileId = resume.file_id;
+                    displayResumeDisplay();
+                    displayParsedData(resume);
+                }
+            } catch (error) {
+                console.error('No existing resume found');
+            }
+        }
+    </script>
+</body>
+</html>

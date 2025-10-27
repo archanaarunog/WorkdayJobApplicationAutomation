@@ -54,11 +54,19 @@ class Company(Base):
     # All users belonging to this company
     users = relationship("User", back_populates="company", foreign_keys="User.company_id")
     
-    # All jobs posted by this company
-    jobs = relationship("Job", back_populates="company", cascade="all, delete-orphan")
+    # All jobs posted by this company (no back_populates since Job.company is a Column, not a relationship)
+    jobs = relationship("Job", foreign_keys="Job.company_id", cascade="all, delete-orphan")
     
     # All applications for jobs at this company
     applications = relationship("Application", back_populates="company", cascade="all, delete-orphan")
+    
+    # Email relationships
+    emails = relationship("Email", back_populates="company", cascade="all, delete-orphan")
+    email_templates = relationship("EmailTemplate", back_populates="company", cascade="all, delete-orphan")
+    
+    # File upload relationships
+    files = relationship("FileUpload", back_populates="company", cascade="all, delete-orphan")
+    resumes = relationship("Resume", back_populates="company", cascade="all, delete-orphan")
     
     # The admin user relationship (separate from general users)
     admin_user = relationship("User", foreign_keys=[admin_user_id], post_update=True)

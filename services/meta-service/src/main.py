@@ -13,17 +13,22 @@
 # Import FastAPI and CORS middleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi import status
 # Import database engine and Base for table creation
 from src.config.database import engine, Base
 # Import all models so tables are created
-from src.models import user, job, application
+from src.models import user, job, application, company, email, file_upload
 
 
-# Import user, job, application, and admin routers
+# Import user, job, application, admin, email, and file_upload routers
 from src.routes import user as user_routes
 from src.routes import job as job_routes
 from src.routes import applications as applications_routes
 from src.routes import admin as admin_routes
+from src.routes import email as email_routes
+from src.routes import file_upload as file_upload_routes
 
 
 # Create all database tables from models (run once at startup)
@@ -38,6 +43,31 @@ app = FastAPI(
     description="Job Application Portal for Meta",
     version="1.0.0"
 )
+
+
+# Add custom validation error handler for clearer messages
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    """
+    Custom handler for Pydantic validation errors.
+    Returns a clearer, user-friendly error message alongside detailed errors.
+    """
+    errors = exc.errors()
+    # Build a summary of validation errors
+    error_summary = []
+    for error in errors:
+        field = ".".join(str(x) for x in error["loc"][1:])  # Skip 'body' prefix
+        msg = error["msg"]
+        error_summary.append(f"{field}: {msg}")
+    
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "detail": "Validation failed",
+            "errors": "; ".join(error_summary),
+            "validation_errors": errors  # Full details for debugging
+        }
+    )
 
 
 # Add CORS middleware to allow frontend (React, etc.) to call the backend API
@@ -58,11 +88,13 @@ app.add_middleware(
 
 
 
-# Register the user, job, application, and admin routers
+# Register the user, job, application, admin, email, and file_upload routers
 app.include_router(user_routes.router)
 app.include_router(job_routes.router)
 app.include_router(applications_routes.router)
 app.include_router(admin_routes.router)
+app.include_router(email_routes.router, prefix="/api", tags=["email"])
+app.include_router(file_upload_routes.router)
 
 
 # Health check endpoint (optional, for testing server status)

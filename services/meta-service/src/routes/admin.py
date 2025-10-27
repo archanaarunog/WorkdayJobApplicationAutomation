@@ -136,6 +136,13 @@ def get_all_applications(
     # Build response with user and job details
     result = []
     for app in applications:
+        # Get company name from company_id
+        company_name = "N/A"
+        if app.job.company_id:
+            company_obj = db.query(Company).filter(Company.id == app.job.company_id).first()
+            if company_obj:
+                company_name = company_obj.name
+        
         result.append({
             "id": app.id,
             "status": app.status,
@@ -150,7 +157,7 @@ def get_all_applications(
             "job": {
                 "id": app.job.id,
                 "title": app.job.title,
-                "company": app.job.company,
+                "company": company_name,
                 "department": app.job.department,
                 "location": app.job.location
             }
@@ -245,10 +252,18 @@ def get_all_jobs(
         # Filter application count by company as well
         app_query = filter_by_company(db.query(Application), Application, company_context['company_id'], company_context['is_admin'])
         app_count = app_query.filter(Application.job_id == job.id).count()
+        
+        # Get company name from company_id
+        company_name = "N/A"
+        if job.company_id:
+            company_obj = db.query(Company).filter(Company.id == job.company_id).first()
+            if company_obj:
+                company_name = company_obj.name
+        
         result.append({
             "id": job.id,
             "title": job.title,
-            "company": job.company,
+            "company": company_name,
             "department": job.department,
             "location": job.location,
             "description": job.description,
@@ -385,7 +400,7 @@ def get_job_analytics(
     """Get job performance analytics (admin only)."""
     
     # Top jobs by application count
-    top_jobs = db.query(Job.id, Job.title, Job.company, 
+    top_jobs_query = db.query(Job.id, Job.title, Job.company_id,
                        func.count(Application.id).label('app_count'))\
                  .outerjoin(Application)\
                  .group_by(Job.id)\
@@ -403,16 +418,24 @@ def get_job_analytics(
     active_jobs = db.query(Job).filter(Job.is_active == True).count()
     inactive_jobs = db.query(Job).filter(Job.is_active == False).count()
     
+    # Build response with company names
+    top_jobs_result = []
+    for job in top_jobs_query:
+        company_name = "N/A"
+        if job.company_id:
+            company_obj = db.query(Company).filter(Company.id == job.company_id).first()
+            if company_obj:
+                company_name = company_obj.name
+        
+        top_jobs_result.append({
+            "id": job.id,
+            "title": job.title,
+            "company": company_name,
+            "application_count": job.app_count
+        })
+    
     return {
-        "top_jobs": [
-            {
-                "id": job.id,
-                "title": job.title,
-                "company": job.company,
-                "application_count": job.app_count
-            }
-            for job in top_jobs
-        ],
+        "top_jobs": top_jobs_result,
         "jobs_without_applications": jobs_no_apps,
         "active_jobs": active_jobs,
         "inactive_jobs": inactive_jobs,

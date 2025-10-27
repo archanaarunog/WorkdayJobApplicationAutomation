@@ -53,6 +53,14 @@ class User(Base):
     
     # Company relationship for multi-tenancy
     company = relationship("Company", back_populates="users", foreign_keys=[company_id])
+    
+    # Email relationships
+    received_emails = relationship("Email", foreign_keys="Email.user_id", back_populates="user")
+    email_preferences = relationship("EmailPreference", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    
+    # File upload relationships
+    uploaded_files = relationship("FileUpload", back_populates="user", cascade="all, delete-orphan")
+    resumes = relationship("Resume", back_populates="user", cascade="all, delete-orphan")
 
     # __repr__ is a special method that defines how this object appears when you print it or inspect it in the Python shell.
     # It is not called automatically every time; it is used when you do print(user), repr(user), or see the object in debugging tools.

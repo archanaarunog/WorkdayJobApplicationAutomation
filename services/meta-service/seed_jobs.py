@@ -93,6 +93,7 @@ def create_sample_jobs():
                 salary_min=salary_base,
                 salary_max=salary_base + random.randint(20, 50) * 1000,  # +$20k-$50k range
                 experience_level=random.choice(EXPERIENCES),
+                department="Engineering",
                 company=COMPANIES[i % len(COMPANIES)]
             )
             jobs_to_create.append(new_job)

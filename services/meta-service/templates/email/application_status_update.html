@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Application Status Update - {{ job_title }}{% endblock %}
+
+{% block content %}
+<h2>📋 Application Status Update</h2>
+
+<p>Dear {{ user_name }},</p>
+
+<p>
+    We have an update regarding your application for the 
+    <strong>{{ job_title }}</strong> position at <strong>{{ company_name }}</strong>.
+</p>
+
+<div class="info-box">
+    <h3>Updated Status: <span style="color: {{ status_color }};">{{ new_status }}</span></h3>
+    <p><strong>Position:</strong> {{ job_title }}</p>
+    <p><strong>Company:</strong> {{ company_name }}</p>
+    <p><strong>Application ID:</strong> #{{ application_id }}</p>
+    <p><strong>Status Updated:</strong> {{ update_date }}</p>
+</div>
+
+{% if new_status == "Under Review" %}
+<h3>Great News! 📝</h3>
+<p>
+    Your application has caught our attention and is now under review by our hiring team. 
+    We'll be in touch soon with next steps.
+</p>
+
+{% elif new_status == "Interview Scheduled" %}
+<h3>Congratulations! 🎉</h3>
+<p>
+    We're impressed with your qualifications and would like to invite you for an interview!
+</p>
+{% if interview_details %}
+<div class="info-box">
+    <h3>Interview Details:</h3>
+    <p><strong>Date:</strong> {{ interview_date }}</p>
+    <p><strong>Time:</strong> {{ interview_time }}</p>
+    <p><strong>Type:</strong> {{ interview_type }}</p>
+    {% if interview_location %}
+    <p><strong>Location:</strong> {{ interview_location }}</p>
+    {% endif %}
+    {% if interview_instructions %}
+    <p><strong>Instructions:</strong> {{ interview_instructions }}</p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% elif new_status == "Offer Extended" %}
+<h3>Fantastic News! 🎊</h3>
+<p>
+    We're thrilled to extend an offer for the {{ job_title }} position! 
+    Please check your dashboard for detailed offer information.
+</p>
+
+{% elif new_status == "Not Selected" %}
+<h3>Thank You for Your Interest</h3>
+<p>
+    While we were impressed with your background, we've decided to move forward 
+    with other candidates for this particular role.
+</p>
+<p>
+    We encourage you to apply for future opportunities that match your skills and experience. 
+    Your profile will remain in our talent pool for consideration.
+</p>
+
+{% else %}
+<h3>Status Update</h3>
+<p>
+    Your application status has been updated to: <strong>{{ new_status }}</strong>
+</p>
+{% if status_message %}
+<p>{{ status_message }}</p>
+{% endif %}
+{% endif %}
+
+{% if next_steps %}
+<h3>Next Steps:</h3>
+<ul>
+{% for step in next_steps %}
+    <li>{{ step }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{ application_url }}" class="button">View Full Application Details</a>
+</div>
+
+{% if additional_message %}
+<div class="divider"></div>
+<h3>Additional Information</h3>
+<p>{{ additional_message }}</p>
+{% endif %}
+
+<p>
+    If you have any questions about this update or your application, 
+    please don't hesitate to reach out to our team.
+</p>
+
+<p>
+    Best regards,<br>
+    <strong>The {{ company_name }} Hiring Team</strong>
+</p>
+{% endblock %}

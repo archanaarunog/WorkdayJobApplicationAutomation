@@ -44,6 +44,10 @@ class Application(Base):
     job = relationship("Job", back_populates="applications")
     # Company relationship for multi-tenancy (derived from job)
     company = relationship("Company", back_populates="applications")
+    # Email relationship - emails sent regarding this application
+    emails = relationship("Email", back_populates="application")
+    # Resume relationship - resume submitted with this application
+    resume = relationship("Resume", back_populates="application", uselist=False)
 
     def __repr__(self):
         return f"<Application(id={self.id}, user_id={self.user_id}, job_id={self.job_id}, status='{self.status}')>"
