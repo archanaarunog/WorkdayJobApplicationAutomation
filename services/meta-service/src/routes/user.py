@@ -123,7 +123,15 @@ def login_user(form: schemas.UserLogin, db: Session = Depends(get_db)):
         "is_admin": user.is_admin
     }
     token = auth.create_access_token(token_data)
-    return {"access_token": token, "token_type": "bearer"}
+    # Also return role/context flags for easier frontend routing
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "is_admin": user.is_admin,
+        "company_id": user.company_id,
+        "user_id": user.id,
+        "email": user.email
+    }
 
 @router.get("/me", response_model=schemas.UserRead)
 def get_current_user_profile(current_user: User = Depends(get_current_user)):

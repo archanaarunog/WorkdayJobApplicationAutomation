@@ -218,16 +218,24 @@ loginForm.addEventListener('submit', async function(e) {
       
       // Save token and user info
       localStorage.setItem('token', result.access_token);
-      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userEmail', result.email || email);
+      if (typeof result.is_admin !== 'undefined') {
+        localStorage.setItem('isAdmin', result.is_admin ? 'true' : 'false');
+      }
+      if (typeof result.company_id !== 'undefined') {
+        localStorage.setItem('companyId', String(result.company_id));
+      }
+      if (typeof result.user_id !== 'undefined') {
+        localStorage.setItem('userId', String(result.user_id));
+      }
       
-      // Try to fetch user's full name from the API (if available)
-      // For now, we'll extract from email
-      const userName = email.split('@')[0];
+      // Set user friendly name
+      const userName = (result.email || email).split('@')[0];
       localStorage.setItem('userName', userName);
       
       // Handle "Remember Me"
       if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
+        localStorage.setItem('rememberedEmail', result.email || email);
         localStorage.setItem('rememberMe', 'true');
       } else {
         localStorage.removeItem('rememberedEmail');
@@ -237,10 +245,11 @@ loginForm.addEventListener('submit', async function(e) {
       // Show success message
       showAlert('Login successful! Redirecting...', 'success');
       
-      // Redirect after short delay
+      // Redirect based on role after short delay
       setTimeout(() => {
-        window.location.href = 'jobs.html';
-      }, 1000);
+        const isAdmin = (localStorage.getItem('isAdmin') === 'true');
+        window.location.href = isAdmin ? 'admin-dashboard.html' : 'jobs.html';
+      }, 800);
       
     } else {
       const error = await response.json();
