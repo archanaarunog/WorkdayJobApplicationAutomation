@@ -16,6 +16,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi import status
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+
 # Import database engine and Base for table creation
 from src.config.database import engine, Base
 # Import all models so tables are created
@@ -29,6 +32,7 @@ from src.routes import applications as applications_routes
 from src.routes import admin as admin_routes
 from src.routes import email as email_routes
 from src.routes import file_upload as file_upload_routes
+from src.routes import resume as resume_routes
 
 
 # Create all database tables from models (run once at startup)
@@ -78,14 +82,13 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:8080",
-        "http://localhost:8081"
+        "http://localhost:8081",
+        "*",  # Allow all for deployment
     ],  # Frontend URLs
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
 )
-
-
 
 
 # Register the user, job, application, admin, email, and file_upload routers
@@ -95,10 +98,15 @@ app.include_router(applications_routes.router)
 app.include_router(admin_routes.router)
 app.include_router(email_routes.router, prefix="/api", tags=["email"])
 app.include_router(file_upload_routes.router)
+app.include_router(resume_routes.router)
 
-
-# Health check endpoint (optional, for testing server status)
-# You can visit http://localhost:8000/ to check if the server is running.
-@app.get("/")
+# Health check endpoint (define BEFORE static mount so it isn't shadowed)
+# You can visit http://localhost:8000/api/health to check if the server is running.
+@app.get("/api/health")
 def root():
     return {"message": "Meta Portal API is running!"}
+
+# Mount static files for frontend LAST so API routes take precedence
+# Resolve absolute path to the frontend public directory regardless of CWD
+FRONTEND_DIR = Path(__file__).resolve().parents[3] / "frontend" / "meta-ui" / "public"
+app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="static")

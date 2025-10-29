@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: |
+            services/meta-service/requirements.txt
+
+      - name: Install dependencies (meta-service)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r services/meta-service/requirements.txt
+          pip install ruff
+
+      - name: Import sanity check
+        run: |
+          python - << 'PY'
+          import sys
+          sys.path.append('services/meta-service')
+          import src.main as m
+          print('Imported src.main OK')
+          PY
+
+      - name: Lint (ruff - non-blocking)
+        run: |
+          ruff --version
+          ruff check services/meta-service/src services/meta-service/tests --output-format=github || true
+
+      - name: Run tests
+        working-directory: services/meta-service
+        run: |
+          python -m pytest -q tests
