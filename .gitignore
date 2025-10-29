@@ -86,3 +86,8 @@ dmypy.json
 .pyre/
 .pytype/
 .ruff_cache/
+
+# Local scripts
+clean_cache.sh
+restart_vscode.sh
+start_vscode_light.sh
