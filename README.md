@@ -2,7 +2,7 @@
 
 # Workday Job Application Automation Platform
 
-**Version:** v1.1.0 (Production Ready) | **Date:** October 27, 2025
+**Version:** v1.1.0 (Production Ready) | **Date:** October 30, 2025
 **Status:** ✅ Complete & Deployed
 
 ---
@@ -19,6 +19,23 @@ A **complete multi-tenant job application management platform** built with FastA
 - **Email System**: Template-based email management with queue monitoring and history
 - **Admin Dashboard**: Real-time statistics, user/job/company management across all tenants
 - **User Authentication**: Secure JWT-based auth with role-based access control
+- **CI/CD Pipeline**: Automated testing and deployment via GitHub Actions
+
+---
+
+## 📋 Project Background and Current Status
+
+### Initial Plan (High-Level Overview)
+The project was originally envisioned as a system supporting **three separate company portals** (e.g., Meta, Google, Amazon) with an integrated **automation framework** to automatically apply for jobs across these portals. This would enable streamlined job application processes for users across multiple companies.
+
+### Current Implementation Status
+The project has evolved into a **single, comprehensive multi-tenant job application portal** serving as the core platform. This Meta Job Application Portal is fully implemented and production-ready, featuring:
+- Complete backend and frontend for job management, applications, and admin oversight
+- Multi-company support with data isolation
+- Integrated resume and email systems
+- Automated CI/CD for quality assurance
+- Extensive test data and documentation
+
 
 ---
 
@@ -29,6 +46,7 @@ A **complete multi-tenant job application management platform** built with FastA
 - **Frontend**: HTML5, CSS3 (Bootstrap 5), Vanilla JavaScript, Responsive design
 - **Database**: SQLite with 7 core tables (User, Company, Job, Application, Resume, Email, FileUpload)
 - **Security**: CORS protection, password hashing, JWT tokens, multi-tenant data isolation
+- **CI/CD**: GitHub Actions with automated testing and linting
 
 ### Core Components
 - **56+ API Endpoints**: RESTful APIs with comprehensive documentation
@@ -37,6 +55,39 @@ A **complete multi-tenant job application management platform** built with FastA
 - **Email Management**: SMTP integration with template system
 - **Admin Portal**: Complete dashboard for system management
 - **Real-time Updates**: Live statistics and status monitoring
+- **Automated Testing**: Smoke tests for health, jobs, and auth endpoints
+
+---
+
+## 🔄 CI/CD Pipeline
+
+The project includes a fully configured GitHub Actions CI pipeline for automated testing and quality assurance.
+
+### What Runs on Each Push/PR
+- **Import Sanity Check**: Verifies the FastAPI app loads without errors
+- **Linting**: Ruff code quality checks (non-blocking for now)
+- **Automated Tests**: Async smoke tests covering:
+  - Health endpoint (`GET /api/health`)
+  - Public job listing (`GET /api/jobs/`)
+  - Auth guard on applications (`POST /api/applications/` without token)
+- **Build Status**: Green checkmark indicates all checks pass
+
+### Viewing CI Results
+1. Go to https://github.com/archanaarunog/WorkdayJobApplicationAutomation/actions
+2. Click the "CI" workflow
+3. Select the latest run
+4. Expand steps to see logs and test outputs
+
+### Local Testing
+Run the same tests locally:
+```bash
+cd services/meta-service
+source venv_py311/bin/activate
+python -m pytest -q tests
+```
+
+---
+- **Automated Testing**: Smoke tests for health, jobs, and auth endpoints
 
 ---
 
@@ -110,6 +161,13 @@ Email: archanaarunog@gmail.com
 Password: Archana@123
 Access: Super-admin (all companies, all data)
 ```
+
+### 6. Load Test Data (Optional)
+```bash
+cd services/meta-service
+python complete_setup.py
+```
+This populates the database with 26 companies, 75 jobs, 19 users, and 54 applications for testing.
 
 ---
 
@@ -236,7 +294,28 @@ WorkdayJobApplicationAutomation/
 
 ---
 
-## 📈 Development Phases Completed
+## � Future Plans
+
+### Automation Framework (Paused)
+The original vision included an **automation framework** to automatically apply for jobs across multiple company portals. This feature is currently paused but planned for future development. It would enable users to submit applications programmatically to external job portals (e.g., Meta, Google, Amazon) with resume parsing and application tracking.
+
+### Testing Phase Repository
+Ongoing work on automation and testing frameworks is conducted in the dedicated repository: **[JobApplicationPortalTestFramework](https://github.com/archanaarunog/JobApplicationPortalTestFramework)**. This repo focuses on:
+- Selenium-based UI automation for job portals
+- API testing frameworks
+- CI/CD integration for automated testing
+- Self-healing test automation features
+
+### Potential Expansions
+- Deployment to cloud platforms (Railway, Heroku)
+- Mobile app development
+- Advanced analytics and reporting
+- Integration with external job boards
+- Multi-language support
+
+---
+
+## �📈 Development Phases Completed
 
 ### Phase 1: User Authentication ✅
 - User registration with email and password
@@ -442,13 +521,16 @@ This is a complete, enterprise-grade job application management system with:
 - ✅ Professional UI/UX design
 - ✅ Complete documentation and testing
 - ✅ Security best practices implemented
+- ✅ Automated CI/CD pipeline
+
+**Current Status**: The core Meta Job Application Portal is fully implemented and operational. The automation framework for cross-portal job applications is paused but planned for future development in the dedicated testing repository.
 
 **Ready for production deployment and portfolio showcase!**
 
 ---
 
 *Built with ❤️ using FastAPI, SQLAlchemy, and Bootstrap 5*
-*Last updated: October 27, 2025*
+*Last updated: October 30, 2025*
 
 ## Skills Used
 
@@ -636,23 +718,21 @@ python3 -m http.server 8081
 
 ## Changelog
 
-### v1.1.0 (In Progress - Phase 1 Complete)
-**Design System & UI/UX Improvements:**
-- ✅ Created global theme.css with CSS custom properties
-- ✅ Implemented pastel purple/lavender color scheme (#9B8ACB primary, #E2D9F3 light backgrounds)
-- ✅ Updated all buttons with purple styling and hover effects
-- ✅ Enhanced card components with shadows and hover animations
-- ✅ Improved form inputs with purple focus states and proper labeling
-- ✅ Added consistent typography classes (heading-1, heading-2, heading-3, text-body, text-small)
-- ✅ Implemented proper spacing and padding across all pages
-- ✅ Centered login/register forms with professional layout
-- ✅ Added background pattern with gradient effects
-- ✅ Applied theme consistently across index, login, register, and jobs pages
+### v1.1.0 (Completed - October 30, 2025)
+**CI/CD and Testing Enhancements:**
+- ✅ Added GitHub Actions CI pipeline with automated testing
+- ✅ Implemented async smoke tests for health, jobs, and auth endpoints
+- ✅ Added Ruff linting (non-blocking)
+- ✅ Fixed route ordering for API precedence over static files
+- ✅ Ensured job listing route is explicitly public
+- ✅ Added comprehensive test data setup scripts
+- ✅ Updated documentation and README for current status
 
-**File Changes:**
-- Created: `frontend/meta-ui/public/assets/css/theme.css` (340+ lines)
-- Modified: All HTML files (index, login, register, jobs) with new classes and styling
-- Modified: `frontend/meta-ui/assets/js/jobs.js` for enhanced card rendering
+**System Improvements:**
+- ✅ Verified multi-tenant architecture with 26 companies
+- ✅ Confirmed 75 jobs and 54 applications with full workflow
+- ✅ Validated resume and email management systems
+- ✅ Production-ready admin dashboard with real-time stats
 
 ### v1.0.0 (Completed)
 - User registration and login with JWT authentication
