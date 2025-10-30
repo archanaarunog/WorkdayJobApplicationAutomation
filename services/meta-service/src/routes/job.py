@@ -3,7 +3,7 @@ Job routes for Meta Portal API.
 Handles job listing endpoints.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from src.config.database import get_db
 from src import schemas, models
@@ -14,25 +14,16 @@ from typing import Optional
 router = APIRouter(prefix="/api/jobs", tags=["Job"])
 
 
-@router.get("/", response_model=list[schemas.JobRead])
+@router.get("/", dependencies=[], response_model=list[schemas.JobRead])
 def list_jobs(
     db: Session = Depends(get_db),
-    company_context: Optional[dict] = Depends(get_user_company_context)
+    company_id: Optional[int] = Query(default=None, description="Optional company filter")
 ):
-    """List active jobs. For authenticated users, shows jobs from their company and external jobs if allowed."""
+    """List active jobs. Public endpoint returns all active jobs; can filter by company_id if provided."""
     query = db.query(models.job.Job).filter(models.job.Job.is_active == True)
-    
-    if company_context and company_context.get('company_id'):
-        # For authenticated users, show jobs from their company
-        # In future versions, this could be expanded to show external jobs based on company settings
-        query = filter_by_company(query, models.job.Job, company_context['company_id'], company_context.get('is_admin', False))
-    else:
-        # For unauthenticated users, could show public jobs or require authentication
-        # For now, require authentication by raising an exception
-        raise HTTPException(status_code=401, detail="Authentication required to view jobs")
-    
-    jobs = query.order_by(models.job.Job.posted_date.desc()).all()
-    return jobs
+    if company_id is not None:
+        query = query.filter(models.job.Job.company_id == company_id)
+    return query.order_by(models.job.Job.posted_date.desc()).all()
 
 # Create a new job
 @router.post("/", response_model=schemas.JobRead)
